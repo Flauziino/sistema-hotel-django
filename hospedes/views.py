@@ -1,22 +1,22 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.contrib import messages
-from .forms import HospedeForm
+from .forms import ReservaForm
 
 
 # Apos a criaçao do app Quartos
 # é preciso voltar e realizar algumas verificaçoes
-def registrar_hospede(request):
+def realizar_reserva(request):
 
-    form = HospedeForm()
+    form = ReservaForm()
 
     if request.method == "POST":
 
         if form.is_valid():
-            hospede = form.save(commit=False)
+            reserva = form.save(commit=False)
 
-            hospede.registrado_por = request.user.portaria
-            hospede.save()
+            reserva.registrado_por = request.user.portaria
+            reserva.save()
 
             messages.success(
                 request,
@@ -28,12 +28,12 @@ def registrar_hospede(request):
             )
 
     contexto = {
-        "nome_pagina": "Registrar hóspede",
+        "nome_pagina": "Realizar reserva",
         "form": form
     }
 
     return render(
         request,
-        "registrar_hospede.html",
+        "realizar_reserva.html",
         contexto
     )

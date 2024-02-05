@@ -1,5 +1,6 @@
 from django.db import models
 from portaria.models import Portaria
+from quartos.models import Quarto
 
 
 class Hospede(models.Model):
@@ -47,10 +48,15 @@ class Hospede(models.Model):
     )
 
     horario_checkout = models.DateTimeField(
-        verbose_name="Horárrio da realização do Check-Out",
+        verbose_name="Horário da realização do Check-Out",
         auto_now=True,
         blank=True,
         null=True
+    )
+
+    reservas = models.ManyToManyField(
+        'Reserva',
+        verbose_name='Reservas do hóspede'
     )
 
     registrado_por = models.ForeignKey(
@@ -83,3 +89,73 @@ class Hospede(models.Model):
 
     def __str__(self):
         return self.nome_completo
+
+
+class Reserva(models.Model):
+
+    STATUS_RESERVA = [
+        ('AGUARDANDO', 'Aguardando confirmação'),
+        ('CONFIRMADO', 'Reserva confirmada'),
+        ('CANCELADA', 'Reserva cancelada')
+    ]
+
+    FORMA_PAGAMENTO_CHOICES = [
+        ("CARD_CRED", "Cartão de crédito"),
+        ("CARD_DEB", "Cartão de débito"),
+        ("BOLETO", "Boleto bancário"),
+        ("TED", "Transferência bancária"),
+        ("A_VISTA", "Pagamento a vista")
+    ]
+
+    forma_pagamento = models.CharField(
+        verbose_name="Forma de pagamento",
+        max_length=10,
+        choices=FORMA_PAGAMENTO_CHOICES,
+        default="A_VISTA"
+    )
+
+    nome_hospede = models.ForeignKey(
+        Hospede,
+        on_delete=models.DO_NOTHING
+    )
+
+    status_reserva = models.CharField(
+        verbose_name="Status da reserva",
+        max_length=15,
+        default='AGUARDANDO'
+    )
+
+    registrado_por = models.ForeignKey(
+        Portaria,
+        verbose_name="Atendente responsável pela reserva",
+        on_delete=models.PROTECT,
+        blank=True,
+        null=True
+    )
+
+    horario_checkin = models.DateTimeField(
+        verbose_name="Horário previsto para realização do Check-In",
+        auto_now=False,
+        blank=True,
+        null=True
+    )
+
+    horario_checkout = models.DateTimeField(
+        verbose_name="Horário previsto realização do Check-Out",
+        auto_now=False,
+        blank=True,
+        null=True
+    )
+
+    quartos = models.ManyToManyField(
+        Quarto,
+        verbose_name='Quarto reservado pelo hóspede',
+    )
+
+    class Meta:
+        verbose_name = 'Reserva'
+        verbose_name_plural = 'Reservas'
+        db_table = 'reserva'
+
+    def __str__(self):
+        return f'Reserva em nome de: {self.hospede}'
