@@ -1,11 +1,11 @@
 from django.db import models
-from usuarios.models import Usuario
+from django.contrib.auth import get_user_model
 
 
 class Portaria(models.Model):
 
     usuario = models.OneToOneField(
-        Usuario,
+        get_user_model(),
         verbose_name="Usuário",
         on_delete=models.PROTECT,
     )

@@ -1,6 +1,7 @@
 from django import forms
 from hospedes.models import Hospede, Reserva
 from quartos.models import Quarto
+from portaria.models import Portaria
 
 
 class ReservaForm(forms.ModelForm):
@@ -44,7 +45,7 @@ class ReservaForm(forms.ModelForm):
         fields = [
             "nome_completo", "cpf", "telefone",
             "quartos", "status_reserva", "horario_checkin",
-            "horario_checkout", "registrado_por"
+            "horario_checkout",
         ]
 
         widgets = {
@@ -68,9 +69,6 @@ class ReservaForm(forms.ModelForm):
             ),
             'horario_checkout': forms.TextInput(
                 attrs={'placeholder': 'Qual horário previsto para check-out?'}
-            ),
-            'registrado_por': forms.TextInput(
-                attrs={'placeholder': 'Nome do atendente atual da portaria'}
             )
         }
 
@@ -79,7 +77,6 @@ class ReservaForm(forms.ModelForm):
             'cpf': 'CPF:',
             'telefone': 'Telefone:',
             'quartos': 'Quarto (Quartos caso haja mais de um):',
-            'registrado_por': 'Nome do atendente:',
         }
 
         error_messages = {
@@ -104,9 +101,5 @@ class ReservaForm(forms.ModelForm):
 
             "horario_checkout": {
                 "required": "A previsão de horário de check-out é obrigatório"
-            },
-
-            "registrado_por": {
-                "required": "Preencha com o atendente atual da portaria"
             }
         }

@@ -44,14 +44,14 @@ class Usuario(AbstractBaseUser, PermissionsMixin):
 
     groups = models.ManyToManyField(
         Group,
-        related_name='usuarios',
+        related_name='usuarios_custom',
         verbose_name=_('grupos'),
         blank=True,
     )
 
     user_permissions = models.ManyToManyField(
         Permission,
-        related_name='usuarios',
+        related_name='usuarios_custom',
         verbose_name=_('permissões do usuário'),
         blank=True,
     )

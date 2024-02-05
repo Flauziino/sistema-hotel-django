@@ -116,7 +116,7 @@ class Reserva(models.Model):
 
     nome_hospede = models.ForeignKey(
         Hospede,
-        on_delete=models.DO_NOTHING
+        on_delete=models.PROTECT
     )
 
     status_reserva = models.CharField(

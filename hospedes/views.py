@@ -12,6 +12,8 @@ def realizar_reserva(request):
 
     if request.method == "POST":
 
+        form = ReservaForm(request.POST)
+
         if form.is_valid():
             reserva = form.save(commit=False)
 

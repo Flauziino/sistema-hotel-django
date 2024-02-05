@@ -7,12 +7,22 @@
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <h1 class="h3 mb-0 text-gray-800">{{ nome_pagina }}</h1>
 
-        <a href="{% url "hospedes:realizar_reserva" %}" class="btn btn-primary btn-icon-split btn-sm">
-            <span class="text">Realizar reserva</span>
-            <span class="icon text-white-50">
-                <i class="fas fa-user-plus"></i>
-            </span>
-        </a>
+        <div class="d-flex mt-4 mb-4">
+            <a href="{% url "hospedes:realizar_reserva" %}" class="btn btn-primary btn-icon-split btn-sm mr-1">
+                <span class="text">Realizar reserva</span>
+                <span class="icon text-white-50">
+                    <i class="fas fa-solid fa-hotel"></i>
+                </span>
+            </a>
+
+            <a href="#" class="btn btn-primary btn-icon-split btn-sm ml-1">
+                <span class="text">Realizar Check-In</span>
+                <span class="icon text-white-50">
+                    <i class="fas fa-home"></i>
+                    <i class="fas fa-check-circle"></i>
+                </span>
+            </a>
+        </div>
     </div>
 
     {% if messages %}
