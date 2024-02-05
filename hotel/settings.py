@@ -29,11 +29,18 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+# MEUS APPS
 INSTALLED_APPS += [
     'usuarios',
     'portaria',
     'hospedes',
 ]
+
+# EXTRAS
+INSTALLED_APPS += [
+    'widget_tweaks',
+]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

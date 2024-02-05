@@ -1,4 +1,5 @@
 from django.db import models
+from portaria.models import Portaria
 
 
 class Hospede(models.Model):
@@ -50,6 +51,14 @@ class Hospede(models.Model):
         auto_now=True,
         blank=True,
         null=True
+    )
+
+    registrado_por = models.ForeignKey(
+        Portaria,
+        verbose_name="Atendente da portaria responsável pelo Check-In",
+        on_delete=models.PROTECT,
+        null=True,
+        blank=True
     )
 
     def get_cpf(self):
