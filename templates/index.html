@@ -8,7 +8,7 @@
         <h1 class="h3 mb-0 text-gray-800">{{ nome_pagina }}</h1>
 
         <a href="#" class="btn btn-primary btn-icon-split btn-sm">
-            <span class="text">Registrar visitante</span>
+            <span class="text">Registrar hóspede</span>
             <span class="icon text-white-50">
                 <i class="fas fa-user-plus"></i>
             </span>
@@ -29,7 +29,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Visitantes aguardando autorização</div>
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Aguardando Check-in</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_aguardando}}</div>
                         </div>
                         
@@ -46,7 +46,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Visitantes no condomínio</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Quartos ocupados</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_em_visita}}</div>
                         </div>
                         
@@ -63,7 +63,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Visitas finalizadas</div>
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Check-Out concluído</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_finalizado}}</div>
                         </div>
                         <div class="col-auto">
@@ -79,7 +79,7 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Visitantes registrados no mês atual</div>
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Hóspedes registrados no mês atual</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitante_mes}}</div>
                         </div>
                         <div class="col-auto">
@@ -104,27 +104,27 @@
                         <th>CPF</th>
                         <th>Horário de chegada</th>
                         <th>Status</th>
-                        <th>Horário da autorização</th>
-                        <th>Autorizado por</th>
+                        <th>Horário do check-in</th>
+                        <th>Número do quarto</th>
                         <th>Mais informações</th>
                     </thead>
 
                     <tbody>
-                        {% for visitante in todos_visitantes %}
+
                             <tr>
-                                <td>{{visitante.nome_completo}}</td>
-                                <td>{{visitante.get_cpf}}</td>
-                                <td>{{visitante.horario_chegada}}</td>
-                                <td>{{visitante.get_status_display}}</td>
-                                <td>{{visitante.get_horario_autorizacao}}</td>
-                                <td>{{visitante.get_morador_responsavel}}</td>
+                                <td>Hóspede doido</td>
+                                <td>12345678910</td>
+                                <td>13:13</td>
+                                <td>Na espera</td>
+                                <td>-</td>
+                                <td>-</td>
                                 <td>
-                                    <a href="{% url "informacoes_visitante" visitante.id %}">
+                                    <a href="#">
                                         Ver informações
                                     </a>
                                 </td>
                             </tr>
-                        {% endfor %}
+
                     </tbody>
                 </table>
             </div>
