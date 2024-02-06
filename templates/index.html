@@ -95,10 +95,10 @@
     </div>
     
     {% if reservas %}
-        {% for reserva in reservas %}
+        
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
-                    <h6 class="m-0 font-weight-bold text-primary">Reservas feitas</h6>
+                    <h5 class="m-0 font-weight-bold text-primary">Reservas feitas</h5>
                 </div>
                 
                 <div class="card-body">
@@ -111,23 +111,23 @@
                                 <th>Status</th>
                                 <th>Horário previsto para Check-In</th>
                                 <th>Horário previsto para Check-Out</th>
-                                <th>Número do quarto</th>
-                                <th>Atendente</th>
+                                <th>Número do quarto (ou quartos se houver)</th>
+                                <th>Atendente que realizou a reserva</th>
                                 <th>Mais informações</th>
                             </thead>
+                            {% for reserva in reservas %}
 
-                            <tbody>
-
+                                <tbody>             
                                     <tr>
                                         <td>{{ reserva.nome_hospede }}</td>
-                                        <td>{{ reserva.nome_hospede.cpf }}</td>
+                                        <td>{{ reserva.nome_hospede.get_cpf }}</td>
                                         <td>{{ reserva.get_status_forma_pagamento_display }}</td>
                                         <td>{{ reserva.get_status_reserva_display }}</td>
                                         <td>{{ reserva.horario_checkin }}</td>
                                         <td>{{ reserva.horario_checkout }}</td>
                                         <td>
                                             {% for quarto in reserva.quartos.all %}
-                                                {{ quarto.numero_quarto }}
+                                                {{ quarto.numero_quarto }}{% if not forloop.last %}, {% endif %}
                                             {% endfor %}
                                         </td>
                                         <td>{{ reserva.registrado_por }}</td>
@@ -137,53 +137,64 @@
                                             </a> 
                                         </td>
                                     </tr>
+                                </tbody>
 
-                            </tbody>
+                            {% endfor %}
                         </table>
                     </div>
                 </div>
             </div>
-        {% endfor %}
+
     {% endif %}
-    <div class="card shadow mb-4">
-        <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
-            <h6 class="m-0 font-weight-bold text-primary">Hóspedes no hotel</h6>
-        </div>
-        
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered">
-                    <thead>
-                        <th>Nome completo</th>
-                        <th>CPF</th>
-                        <th>Horário de chegada</th>
-                        <th>Status</th>
-                        <th>Horário do check-in</th>
-                        <th>Número do quarto</th>
-                        <th>Mais informações</th>
-                    </thead>
 
-                    <tbody>
 
-                            <tr>
-                                <td>Hóspede doido</td>
-                                <td>12345678910</td>
-                                <td>13:13</td>
-                                <td>Na espera</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>
-                                    <a href="#">
-                                        Realizar Check-Out
-                                    </a>
-                                </td>
-                            </tr>
 
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
+    {% if hospedes %}
+       
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h5 class="m-0 font-weight-bold text-primary">Hóspedes no hotel</h5>
+                </div>
+                
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <th>Nome completo</th>
+                                <th>CPF</th>
+                                <th>Status</th>
+                                <th>Horário do check-in</th>
+                                <th>Número do quarto (ou quartos se houver)</th>
+                                <th>Atendente que realizou check-in</th>
+                                <th>Mais informações</th>
+                            </thead>
+
+                            {% for hospede in hospedes %}
+                                <tbody>
+                                        <tr>
+                                            <td>{{ hospede.nome_completo }}</td>
+                                            <td>{{ hospede.get_cpf }}</td>
+                                            <td>{{ hospede.get_status_display }}</td>
+                                            <td>{{ hospede.horario_checkin }}</td>
+                                            <td>
+                                                {{ hospede.reservas }}
+                                            </td>
+                                            <td>{{ hospede.registrado_por }}</td>
+                                            <td>
+                                                <a href="{% url "hospedes:hospede_info" hospede.id %}">
+                                                    Realizar Check-Out
+                                                </a>
+                                            </td>
+                                        </tr>
+                                </tbody>
+
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>    
+
+    {% endif %}
 </div>
 
 {% endblock conteudo %}

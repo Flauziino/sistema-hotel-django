@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect, get_object_or_404
-
 from django.contrib import messages
+from django.db import transaction
+
 from .forms import ReservaForm
 from .models import Hospede, Reserva
+from quartos.models import Quarto
 
 from django.utils import timezone
 
@@ -25,16 +27,27 @@ def realizar_reserva(request):
                 horario_checkin=form.cleaned_data['horario_checkin'],
             )
 
-            # Criar reserva associada ao novo hospede
-            reserva = form.save(commit=False)
-            reserva.nome_hospede = novo_hospede
-            reserva.registrado_por = request.user.portaria
-            reserva.status_reserva = 'CONFIRMADO'
-            reserva.save()
+            # obtendo o quarto escolhido
+            numero_quarto_escolhido = form.cleaned_data['quartos']
+            quarto = get_object_or_404(
+                Quarto,
+                numero_quarto=numero_quarto_escolhido
+            )
 
-            # atualizar o status do novo hospede
-            novo_hospede.status = 'AGUARDANDO_CHECKIN'
-            novo_hospede.save()
+            # Criar reserva associada ao novo hospede
+            with transaction.atomic():
+                reserva = form.save(commit=False)
+                reserva.nome_hospede = novo_hospede
+                reserva.registrado_por = request.user.portaria
+                reserva.status_reserva = 'CONFIRMADO'
+
+                reserva.save()
+
+                reserva.quartos.add(quarto)
+
+                # atualizar o status do novo hospede
+                novo_hospede.status = 'AGUARDANDO_CHECKIN'
+                novo_hospede.save()
 
             messages.success(
                 request,
@@ -58,23 +71,14 @@ def realizar_reserva(request):
 
 def hospede_info(request, id):
 
-    hospede = get_object_or_404(
-        Hospede,
-        id=id
-    )
-
+    hospede = get_object_or_404(Hospede, id=id)
     reserva = Reserva.objects.filter(nome_hospede=hospede).first()
 
-    form = ReservaForm()
-
     if request.method == 'POST':
-        form = ReservaForm(
-            request.POST,
-            instance=hospede
-        )
 
-        if form.is_valid():
-            hospede = form.save(commit=False)
+        action = request.POST.get('action')
+
+        if action == 'check_in':
 
             # Verificando se ainda nao foi feito check-in
             if hospede.status == 'AGUARDANDO_CHECKIN':
@@ -112,7 +116,6 @@ def hospede_info(request, id):
 
     contexto = {
         'hospede': hospede,
-        'form': form,
         'reserva': reserva,
     }
 
