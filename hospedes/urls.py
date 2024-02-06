@@ -10,4 +10,10 @@ urlpatterns = [
         views.realizar_reserva,
         name='realizar_reserva'
     ),
+
+    path(
+        'hospede-info/<int:id>',
+        views.hospede_info,
+        name='hospede_info'
+    ),
 ]

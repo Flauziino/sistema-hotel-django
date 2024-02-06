@@ -1,8 +1,10 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.shortcuts import render, redirect, get_object_or_404
+
 from django.contrib import messages
 from .forms import ReservaForm
 from .models import Hospede, Reserva
+
+from django.utils import timezone
 
 
 # Apos a criaçao do app Quartos
@@ -50,5 +52,72 @@ def realizar_reserva(request):
     return render(
         request,
         "realizar_reserva.html",
+        contexto
+    )
+
+
+def hospede_info(request, id):
+
+    hospede = get_object_or_404(
+        Hospede,
+        id=id
+    )
+
+    reserva = Reserva.objects.filter(nome_hospede=hospede).first()
+
+    form = ReservaForm()
+
+    if request.method == 'POST':
+        form = ReservaForm(
+            request.POST,
+            instance=hospede
+        )
+
+        if form.is_valid():
+            hospede = form.save(commit=False)
+
+            # Verificando se ainda nao foi feito check-in
+            if hospede.status == 'AGUARDANDO_CHECKIN':
+                hospede.horario_checkin = timezone.now()
+                hospede.horario_checkout = '-'
+
+                hospede.status = 'EM_ESTADIA'
+
+                hospede.registrado_por = request.user.portaria
+
+                hospede.save()
+
+                messages.success(
+                    request,
+                    'Check-In do visitante realizado com sucesso'
+                )
+            # Em caso de estadia no hotel, salvar checkout
+            elif hospede.status == 'EM_ESTADIA':
+                hospede.horario_checkout = timezone.now()
+
+                hospede.status = 'CHECKOUT_REALIZADO'
+
+                hospede.registrado_por = request.user.portaria
+
+                hospede.save()
+
+                messages.success(
+                    request,
+                    'Check-Out do visitante realizado com sucesso'
+                )
+
+            return redirect(
+                'usuarios:index'
+            )
+
+    contexto = {
+        'hospede': hospede,
+        'form': form,
+        'reserva': reserva,
+    }
+
+    return render(
+        request,
+        'informacoes_hospede.html',
         contexto
     )
