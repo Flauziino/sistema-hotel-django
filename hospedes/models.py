@@ -152,10 +152,20 @@ class Reserva(models.Model):
         verbose_name='Quarto reservado pelo hóspede',
     )
 
+    def get_status_reserva_display(self):
+        return dict(self.STATUS_RESERVA).get(
+            self.status_reserva, self.status_reserva
+            )
+
+    def get_status_forma_pagamento_display(self):
+        return dict(self.FORMA_PAGAMENTO_CHOICES).get(
+            self.forma_pagamento, self.forma_pagamento
+            )
+
     class Meta:
         verbose_name = 'Reserva'
         verbose_name_plural = 'Reservas'
         db_table = 'reserva'
 
     def __str__(self):
-        return f'Reserva em nome de: {self.hospede}'
+        return f'Reserva em nome de: {self.nome_hospede}'

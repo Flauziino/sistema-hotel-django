@@ -10,6 +10,11 @@ class ReservaForm(forms.ModelForm):
         required=True
     )
 
+    email = forms.CharField(
+        required=True,
+        max_length=194
+    )
+
     cpf = forms.CharField(
         required=True,
         max_length=11
@@ -29,6 +34,11 @@ class ReservaForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
+    forma_pagamento = forms.ChoiceField(
+        choices=Reserva.FORMA_PAGAMENTO_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
     horario_checkin = forms.DateTimeField(
         widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
         input_formats=['%Y-%m-%dT%H:%M']
@@ -43,9 +53,9 @@ class ReservaForm(forms.ModelForm):
         model = Reserva
 
         fields = [
-            "nome_completo", "cpf", "telefone",
-            "quartos", "status_reserva", "horario_checkin",
-            "horario_checkout",
+            "nome_completo", "cpf", "email",
+            "telefone", "quartos", "status_reserva",
+            "forma_pagamento", "horario_checkin", "horario_checkout",
         ]
 
         widgets = {
@@ -54,6 +64,9 @@ class ReservaForm(forms.ModelForm):
             ),
             'cpf': forms.TextInput(
                 attrs={'placeholder': 'Digite o CPF'}
+            ),
+            'email': forms.TextInput(
+                attrs={'placeholder': 'Digite o E-mail'}
             ),
             'telefone': forms.TextInput(
                 attrs={'placeholder': 'Digite o número do hóspede'}
@@ -75,6 +88,7 @@ class ReservaForm(forms.ModelForm):
         labels = {
             'nome_completo': 'Nome completo:',
             'cpf': 'CPF:',
+            'email': 'E-mail:',
             'telefone': 'Telefone:',
             'quartos': 'Quarto (Quartos caso haja mais de um):',
         }
@@ -85,6 +99,9 @@ class ReservaForm(forms.ModelForm):
             },
             "cpf": {
                 "required": "O CPF do hóspede é obrigatório"
+            },
+            "email": {
+                "required": "O E-mail do hóspede é obrigatório"
             },
 
             "telefone": {

@@ -101,9 +101,60 @@
         </div>
     </div>
     
+    {% if reservas %}
+        {% for reserva in reservas %}
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
+                    <h6 class="m-0 font-weight-bold text-primary">Reservas feitas</h6>
+                </div>
+                
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered">
+                            <thead>
+                                <th>Nome completo</th>
+                                <th>CPF</th>
+                                <th>Forma de pagamento</th>
+                                <th>Status</th>
+                                <th>Horário previsto para Check-In</th>
+                                <th>Horário previsto para Check-Out</th>
+                                <th>Número do quarto</th>
+                                <th>Atendente</th>
+                                <th>Mais informações</th>
+                            </thead>
+
+                            <tbody>
+
+                                    <tr>
+                                        <td>{{ reserva.nome_hospede }}</td>
+                                        <td>{{ reserva.nome_hospede.cpf }}</td>
+                                        <td>{{ reserva.get_status_forma_pagamento_display }}</td>
+                                        <td>{{ reserva.get_status_reserva_display }}</td>
+                                        <td>{{ reserva.horario_checkin }}</td>
+                                        <td>{{ reserva.horario_checkout }}</td>
+                                        <td>
+                                            {% for quarto in reserva.quartos.all %}
+                                                {{ quarto.numero_quarto }}
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ reserva.registrado_por }}</td>
+                                        <td>
+                                            <a href="#">
+                                                Ver informações
+                                            </a>
+                                        </td>
+                                    </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% endif %}
     <div class="card shadow mb-4">
         <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
-            <h6 class="m-0 font-weight-bold text-primary">Visitantes recentes</h6>
+            <h6 class="m-0 font-weight-bold text-primary">Hóspedes no hotel</h6>
         </div>
         
         <div class="card-body">
