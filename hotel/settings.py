@@ -35,6 +35,7 @@ INSTALLED_APPS += [
     'portaria',
     'hospedes',
     'quartos',
+    'dashboard',
 ]
 
 # EXTRAS

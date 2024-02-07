@@ -4,20 +4,7 @@
 {% block conteudo %}
 
 <div class="container-fluid">
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">{{ nome_pagina }}</h1>
-
-        <div class="d-flex mt-4 mb-4">
-            <a href="{% url "hospedes:realizar_reserva" %}" class="btn btn-primary btn-icon-split btn-sm mr-1">
-                <span class="text">Realizar reserva</span>
-                <span class="icon text-white-50">
-                    <i class="fas fa-solid fa-hotel"></i>
-                </span>
-            </a>
-
-        </div>
-    </div>
-
+    
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-success" role="alert">
@@ -26,18 +13,18 @@
         {% endfor %}
     {% endif %}
 
-    <div class="row">
+    <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-warning shadow h-100 py-2">
+            <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Aguardando Check-in</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Reservas salvas</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_aguardando}}</div>
                         </div>
                         
                         <div class="col-auto">
-                            <i class="fas fa-user-lock fa-2x text-gray-300"></i>
+                            <i class="fas fa-solid fa-check fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -49,26 +36,10 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Quartos ocupados</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Check-In do dia</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_em_visita}}</div>
                         </div>
                         
-                        <div class="col-auto">
-                            <i class="fas fa-user-clock fa-2x text-gray-300"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
-                <div class="card-body">
-                    <div class="row no-gutters align-items-center">
-                        <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Check-Out concluído</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_finalizado}}</div>
-                        </div>
                         <div class="col-auto">
                             <i class="fas fa-user-check fa-2x text-gray-300"></i>
                         </div>
@@ -76,13 +47,49 @@
                 </div>
             </div>
         </div>
-        
+
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
+            <div class="card border-left-primary shadow h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Hóspedes registrados no mês atual</div>
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Check-Out do dia</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_finalizado}}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-solid fa-door-open fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <div class='row'>
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Ocupação atual do hotel</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_aguardando}}</div>
+                        </div>
+                        
+                        <div class="col-auto">
+                            <i class="fas fa-solid fa-hotel fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Hóspedes registrados no mês atual</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitante_mes}}</div>
                         </div>
                         <div class="col-auto">
@@ -92,13 +99,45 @@
                 </div>
             </div>
         </div>
+
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Estatistica de ocupação do hotel</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_em_visita}}</div>
+                        </div>
+                        
+                        <div class="col-auto">
+                            <i class="fas fa-solid fa-chart-line fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="d-sm-flex align-items-center justify-content-between mb-2">
+        <h1 class="h3 mb-0 text-gray-800">{{ nome_pagina }}</h1>
+
+        <div class="d-flex mt-4 mb-4">
+            <a href="{% url "hospedes:realizar_reserva" %}" class="btn btn-primary btn-icon-split btn-sm mr-1">
+                <span class="text">Realizar reserva</span>
+                <span class="icon text-white-50">
+                    <i class="fas fa-solid fa-hotel"></i>
+                </span>
+            </a>
+        </div>
+    </div>
     </div>
     
     {% if reservas %}
         
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
-                    <h5 class="m-0 font-weight-bold text-primary">Reservas feitas</h5>
+                    <h4 class="m-0 font-weight-bold text-primary">Reservas feitas</h4>
                 </div>
                 
                 <div class="card-body">
@@ -153,7 +192,7 @@
        
             <div class="card shadow mb-4">
                 <div class="card-header py-3 d-sm-flex align-items-center justify-content-between mb-4">
-                    <h5 class="m-0 font-weight-bold text-primary">Hóspedes no hotel</h5>
+                    <h4 class="m-0 font-weight-bold text-primary">Hóspedes no hotel</h4>
                 </div>
                 
                 <div class="card-body">
