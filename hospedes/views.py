@@ -18,40 +18,34 @@ def realizar_reserva(request):
         form = ReservaForm(request.POST)
 
         if form.is_valid():
-            # Inicialmente criar um novo hospede
+
+            # Criar o hospede
             novo_hospede = Hospede.objects.create(
                 nome_completo=form.cleaned_data['nome_completo'],
                 telefone=form.cleaned_data['telefone'],
                 cpf=form.cleaned_data['cpf'],
                 email=form.cleaned_data['email'],
-                horario_checkin=form.cleaned_data['horario_checkin'],
+                status='AGUARDANDO_CHECKIN'
             )
 
-            # obtendo o quarto escolhido
-            numero_quarto_escolhido = form.cleaned_data['quartos']
-            quarto = get_object_or_404(
-                Quarto,
-                numero_quarto=numero_quarto_escolhido
-            )
-
-            # Criar reserva associada ao novo hospede
+            # Criar a reserva associada ao novo hospede
             with transaction.atomic():
-                reserva = form.save(commit=False)
-                reserva.nome_hospede = novo_hospede
-                reserva.registrado_por = request.user.portaria
-                reserva.status_reserva = 'CONFIRMADO'
+                reserva = Reserva.objects.create(
+                    nome_hospede=novo_hospede,
+                    registrado_por=request.user.portaria,
+                    status_reserva='CONFIRMADO',
+                )
 
+                reserva.quartos.set(form.cleaned_data['quartos'])
+                reserva.horario_checkin = form.cleaned_data['horario_checkin']
+                reserva.horario_checkout = form.cleaned_data['horario_checkout']
                 reserva.save()
 
-                reserva.quartos.add(quarto)
-
-                # atualizar o status do novo hospede
-                novo_hospede.status = 'AGUARDANDO_CHECKIN'
-                novo_hospede.save()
+            novo_hospede.reservas.add(reserva)
 
             messages.success(
                 request,
-                "Reserva do hóspede registrado com sucesso!"
+                "Reserva do hóspede registrada com sucesso!"
             )
 
             return redirect(

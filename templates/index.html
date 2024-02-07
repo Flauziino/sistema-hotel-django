@@ -177,7 +177,15 @@
                                             <td>{{ hospede.get_status_display }}</td>
                                             <td>{{ hospede.horario_checkin }}</td>
                                             <td>
-                                                {{ hospede.reservas }}
+                                                {% comment %}
+                                                    caso queira é possivel exibir apenas numero do quarto
+                                                    com {{ quarto.numero_quarto }}
+                                                {% endcomment %}
+                                                {% for reserva in hospede.reservas.all %}
+                                                    {% for quarto in reserva.quartos.all %}
+                                                        {{ quarto }}
+                                                    {% endfor %} 
+                                                {% endfor %}
                                             </td>
                                             <td>{{ hospede.registrado_por }}</td>
                                             <td>

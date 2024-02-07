@@ -4,12 +4,21 @@ from hospedes import models
 
 def index(request):
 
-    reservas = models.Reserva.objects.filter(status_reserva='CONFIRMADO')
-    hospedes = models.Hospede.objects.filter(status='EM_ESTADIA')
+    reservas = (
+        models.Reserva.objects
+        .filter(status_reserva='CONFIRMADO')
+        .order_by('-pk')
+        )
+
+    hospedes = (
+        models.Hospede.objects
+        .filter(status='EM_ESTADIA')
+        .order_by('-pk')
+        )
 
     contexto = {
         'reservas': reservas,
-        'hospedes': hospedes
+        'hospedes': hospedes,
     }
 
     return render(

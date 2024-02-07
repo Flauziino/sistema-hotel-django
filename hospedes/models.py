@@ -45,6 +45,8 @@ class Hospede(models.Model):
     horario_checkin = models.DateTimeField(
         verbose_name="Horário da realização do Check-In",
         auto_now=False,
+        blank=True,
+        null=True
     )
 
     horario_checkout = models.DateTimeField(

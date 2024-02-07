@@ -29,9 +29,9 @@ class ReservaForm(forms.ModelForm):
         choices=Reserva.STATUS_RESERVA,
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-    quartos = forms.ChoiceField(
-        choices=Quarto.objects.values_list('numero_quarto', 'numero_quarto'),
-        widget=forms.Select(attrs={'class': 'form-control'})
+    quartos = forms.ModelMultipleChoiceField(
+        queryset=Quarto.objects.all(),
+        widget=forms.SelectMultiple(attrs={'class': 'form-control'})
     )
 
     forma_pagamento = forms.ChoiceField(
