@@ -4,7 +4,6 @@ from django.db import transaction
 
 from .forms import ReservaForm
 from .models import Hospede, Reserva
-from quartos.models import Quarto
 
 from django.utils import timezone
 
@@ -37,8 +36,15 @@ def realizar_reserva(request):
                 )
 
                 reserva.quartos.set(form.cleaned_data['quartos'])
-                reserva.horario_checkin = form.cleaned_data['horario_checkin']
-                reserva.horario_checkout = form.cleaned_data['horario_checkout']
+
+                reserva.horario_checkin = (
+                    form.cleaned_data['horario_checkin']
+                    )
+
+                reserva.horario_checkout = (
+                    form.cleaned_data['horario_checkout']
+                    )
+
                 reserva.save()
 
             novo_hospede.reservas.add(reserva)
@@ -63,10 +69,9 @@ def realizar_reserva(request):
     )
 
 
-def hospede_info(request, id):
+def check_in(request, id):
 
     hospede = get_object_or_404(Hospede, id=id)
-    reserva = Reserva.objects.filter(nome_hospede=hospede).first()
 
     if request.method == 'POST':
 
@@ -89,20 +94,6 @@ def hospede_info(request, id):
                     request,
                     'Check-In do visitante realizado com sucesso'
                 )
-            # Em caso de estadia no hotel, salvar checkout
-            elif hospede.status == 'EM_ESTADIA':
-                hospede.horario_checkout = timezone.now()
-
-                hospede.status = 'CHECKOUT_REALIZADO'
-
-                hospede.registrado_por = request.user.portaria
-
-                hospede.save()
-
-                messages.success(
-                    request,
-                    'Check-Out do visitante realizado com sucesso'
-                )
 
             return redirect(
                 'usuarios:index'
@@ -110,11 +101,49 @@ def hospede_info(request, id):
 
     contexto = {
         'hospede': hospede,
-        'reserva': reserva,
     }
 
     return render(
         request,
-        'informacoes_hospede.html',
+        'checkin.html',
+        contexto
+    )
+
+
+def check_out(request, id):
+
+    hospede = get_object_or_404(Hospede, id=id)
+
+    if request.method == 'POST':
+
+        action = request.POST.get('action')
+
+        if action == 'check_out':
+            hospede = get_object_or_404(
+                Hospede,
+                id=id
+            )
+
+            hospede.status = 'CHECKOUT_REALIZADO'
+            hospede.horario_checkout = timezone.now()
+
+            hospede.save()
+
+            messages.success(
+                request,
+                'Check-Out realizado com sucesso!'
+            )
+
+            return redirect(
+                'usuarios:index'
+            )
+
+    contexto = {
+        "hospede": hospede,
+    }
+
+    return render(
+        request,
+        'checkout.html',
         contexto
     )

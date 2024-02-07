@@ -12,8 +12,14 @@ urlpatterns = [
     ),
 
     path(
-        'hospede-info/<int:id>',
-        views.hospede_info,
-        name='hospede_info'
+        'hospede-info/<int:id>/check-in',
+        views.check_in,
+        name='check_in'
     ),
+
+    path(
+        'hospede-info/<int:id>/check-out',
+        views.check_out,
+        name='check_out'
+    )
 ]

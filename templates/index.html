@@ -132,7 +132,7 @@
                                         </td>
                                         <td>{{ reserva.registrado_por }}</td>
                                         <td>
-                                            <a href="{% url "hospedes:hospede_info" reserva.nome_hospede.id %}">
+                                            <a href="{% url "hospedes:check_in" reserva.nome_hospede.id %}">
                                                 Realizar Check-In
                                             </a> 
                                         </td>
@@ -183,13 +183,13 @@
                                                 {% endcomment %}
                                                 {% for reserva in hospede.reservas.all %}
                                                     {% for quarto in reserva.quartos.all %}
-                                                        {{ quarto }}
+                                                        {{ quarto.numero_quarto }}{% if not forloop.last %}, {% endif %}
                                                     {% endfor %} 
                                                 {% endfor %}
                                             </td>
                                             <td>{{ hospede.registrado_por }}</td>
                                             <td>
-                                                <a href="{% url "hospedes:hospede_info" hospede.id %}">
+                                                <a href="{% url "hospedes:check_out" hospede.id %}">
                                                     Realizar Check-Out
                                                 </a>
                                             </td>

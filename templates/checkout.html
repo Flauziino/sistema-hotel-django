@@ -1,4 +1,4 @@
-{% comment %} {% extends "base.html" %}
+{% extends "base.html" %}
 
 {% load widget_tweaks %}
 
@@ -7,16 +7,6 @@
 
     <div class="d-sm-flex align-items-center justify-content-between mb-4">
         <div>
-            {% if hospede.status == 'AGUARDANDO_CHECKIN' %}
-                <a href="" class="btn btn-success btn-icon-split btn-sm" data-toggle="modal" data-target="#modal1">
-                    <span class="text">Realizar Check-In</span>
-
-                    <span class="icon text-white-50">
-                        <i class="fas fa-user-check"></i>
-                    </span>
-                </a>
-            {% endif %}
-
             {% if hospede.status == 'EM_ESTADIA' %}
                 <a href="" class="btn btn-warning btn-icon-split btn-sm" data-toggle="modal" data-target="#modal2">
                     <span class="text">Realizar Check-Out</span>
@@ -32,7 +22,7 @@
     <div class="card shadow mb-4">        
         <div class="card-body">
             <h4 class="mb-3 text-primary">
-                Informações da reserva
+                Informações da Estadia
             </h4>
         
             
@@ -72,13 +62,13 @@
 
                     <div class="form-group col-md-4">
                         <label>Horário do Check-Out</label>
-                        <input type="text" class="form-control" value="{{ visitante.get_horario_saida }}" disabled>
+                        <input type="text" class="form-control" value="" disabled>
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group col-md-4">
-                        <label>Reserva registrada por</label>
+                        <label>Check-In feito por</label>
                         <input type="text" class="form-control" value="{{ hospede.registrado_por }}" disabled>
                     </div>
                 </div>
@@ -127,11 +117,11 @@
             </div>
         </div>
     </div>
-    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Realizar o check-in do hóspede</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Realizar o check-out do hóspede</h5>
                     
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -149,12 +139,19 @@
                         </div>
 
                         <div class="form-group row">
-                            <label for="hospede_id" class="col-sm-2 col-form-label mb-0">Número do quarto (ou quartos, caso haja)</label>
+                            <label for="hospede_id" class="col-sm-2 col-form-label mb-0">Quarto(s)</label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" id="hospede_id" value="{{ hospede.nome_completo }}" disabled>
+                                <input type="text" class="form-control" id="hospede_id" value="{% for reserva in hospede.reservas.all %}{% for quarto in reserva.quartos.all %}{{quarto.numero_quarto}}{% if not forloop.last %}, {% endif %}{% endfor %}{% endfor %}" disabled>
                             </div>
                         </div>
                     
+                        <div class="form-group row">
+                            <label for="atendente_id" class="col-sm-2 col-form-label mb-0">F. Pag.</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="atendente_id" value="{% for reserva in hospede.reservas.all %}{{ reserva.get_status_forma_pagamento_display }}{% endfor %}" disabled>
+                            </div>
+                        </div>
+
                         <div class="form-group row">
                             <label for="atendente_id" class="col-sm-2 col-form-label mb-0">Atendente</label>
                             <div class="col-sm-9">
@@ -166,7 +163,7 @@
                             <div class="col-sm-3"></div>
                             <div class="col-sm-9">
                                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" name="action" value="check_in" class="btn btn-primary">Realizar Check-In</button>
+                                <button type="submit" name="action" value="check_out" class="btn btn-primary">Realizar Check-Out</button>
                             </div>
                         </div>
                     </form>
@@ -175,38 +172,5 @@
         </div>
     </div>
 
-    <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Realizar check-out do hóspede</h5>
-                        
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                
-                <div class="modal-body">
-                    <div class="modal-body">
-                        <h5 class="mb-3">
-                            Realmente deseja fazer o check-out?
-                        </h5>
-    
-                        <form method="post" action="#">
-                            {% csrf_token %}
-    
-                            <input hidden>
-    
-                            <div class="modal-footer">
-                                
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                <button type="submit" class="btn btn-primary">Check-Out</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-{% endblock %} {% endcomment %}
+{% endblock %}
