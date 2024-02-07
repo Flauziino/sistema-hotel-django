@@ -4,7 +4,7 @@
 {% block conteudo %}
 
 <div class="container-fluid">
-    
+
     {% if messages %}
         {% for message in messages %}
             <div class="alert alert-success" role="alert">
@@ -12,6 +12,8 @@
             </div>
         {% endfor %}
     {% endif %}
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    </div>
 
     <div class="row mb-4">
         <div class="col-xl-3 col-md-6 mb-4">
@@ -20,7 +22,17 @@
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Reservas salvas</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{visitantes_aguardando}}</div>
+                            <div class="text-xs font-weight-bold text-gray-800 text-uppercase">
+                                {% for reserva in reservas %}
+                                    <hr>
+                                    <div class="mb-2">
+                                        <span class="font-weight-bold text-dark">Reserva em nome de:</span> {{ reserva.nome_hospede }}
+                                    </div>
+                                    <div>
+                                        <span class="font-weight-bold text-dark">Para o dia:</span> {{ reserva.horario_checkin }}
+                                    </div>
+                                {% endfor %}
+                            </div>
                         </div>
                         
                         <div class="col-auto">
@@ -150,7 +162,7 @@
                                 <th>Status</th>
                                 <th>Horário previsto para Check-In</th>
                                 <th>Horário previsto para Check-Out</th>
-                                <th>Número do quarto (ou quartos se houver)</th>
+                                <th>Número do(s) quarto(s)</th>
                                 <th>Atendente que realizou a reserva</th>
                                 <th>Mais informações</th>
                             </thead>
@@ -203,7 +215,7 @@
                                 <th>CPF</th>
                                 <th>Status</th>
                                 <th>Horário do check-in</th>
-                                <th>Número do quarto (ou quartos se houver)</th>
+                                <th>Número do(s) quarto(s)</th>
                                 <th>Atendente que realizou check-in</th>
                                 <th>Mais informações</th>
                             </thead>

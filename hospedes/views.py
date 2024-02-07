@@ -55,7 +55,7 @@ def realizar_reserva(request):
             )
 
             return redirect(
-                "usuarios:index"
+                "index"
             )
 
     contexto = {
@@ -96,7 +96,7 @@ def check_in(request, id):
                 )
 
             return redirect(
-                'usuarios:index'
+                'index'
             )
 
     contexto = {
@@ -135,7 +135,7 @@ def check_out(request, id):
             )
 
             return redirect(
-                'usuarios:index'
+                'index'
             )
 
     contexto = {
