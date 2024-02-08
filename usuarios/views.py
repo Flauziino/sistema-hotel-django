@@ -49,6 +49,12 @@ def index(request):
         .count()
     )
 
+    reservas = (
+        models.Reserva.objects
+        .filter(status_reserva='CONFIRMADO')
+        .order_by('-pk')
+    )
+
     reservas_proximas = (
         models.Reserva.objects
         .filter(status_reserva='CONFIRMADO')
@@ -59,7 +65,7 @@ def index(request):
     hospedes = (
         models.Hospede.objects
         .filter(status='EM_ESTADIA')
-        .order_by('-pk')[:6]
+        .order_by('-pk')
         )
 
     total_reservas = (
@@ -94,8 +100,9 @@ def index(request):
     contexto = {
         'inicio_dashboard': 'Início da dashboard',
         'nome_pagina': 'Informações do hotel',
-        'reservas': reservas_proximas,
+        'reservas': reservas,
         'hospedes': hospedes,
+        'reservas_proximas': reservas_proximas,
         'checkin_hoje': checkin_hoje,
         'checkout_hoje': checkout_hoje,
         'ocupacao_hoje': num_quartos_ocupados,

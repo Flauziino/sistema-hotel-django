@@ -77,6 +77,7 @@ def check_in(request, id):
 
         action = request.POST.get('action')
 
+        # Para realizar checkin
         if action == 'check_in':
 
             # Verificando se ainda nao foi feito check-in
@@ -94,6 +95,29 @@ def check_in(request, id):
                     request,
                     'Check-In do visitante realizado com sucesso'
                 )
+
+            return redirect(
+                'index'
+            )
+
+        # para cancelar reserva
+        elif action == 'cancelar_reserva':
+
+            # Verificando se ainda nao foi feito check-in
+            if hospede.status == 'AGUARDANDO_CHECKIN':
+
+                try:
+                    reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
+                    reserva.status_reserva = 'CANCELADA'
+                    reserva.save()
+
+                    messages.success(
+                        request,
+                        'Reserva do hóspede cancelada com sucesso'
+                    )
+
+                except Reserva.DoesNotExist:
+                    pass
 
             return redirect(
                 'index'

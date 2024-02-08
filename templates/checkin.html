@@ -15,10 +15,17 @@
                         <i class="fas fa-user-check"></i>
                     </span>
                 </a>
+                <a href="" class="ml-3 btn btn-warning btn-icon-split btn-sm" data-toggle="modal" data-target="#modal3">
+                    <span class="text">Cancelar reserva</span>
+
+                    <span class="icon text-white-50">
+                        <i class="fas fa-solid fa-door-open"></i>
+                    </span>
+                </a>
             {% endif %}
         </div>
     </div>
-    
+
     <div class="card shadow mb-4">        
         <div class="card-body">
             <h4 class="mb-3 text-primary">
@@ -170,5 +177,60 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Cancelar a reserva do hóspede</h5>
+                    
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group row">
+                            <label for="hospede_id" class="col-sm-2 col-form-label mb-0">Hóspede</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="hospede_id" value="{{ hospede.nome_completo }}" disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="hospede_id" class="col-sm-2 col-form-label mb-0">Quarto(s)</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="hospede_id" value="{% for reserva in hospede.reservas.all %}{% for quarto in reserva.quartos.all %}{{quarto.numero_quarto}}{% if not forloop.last %}, {% endif %}{% endfor %}{% endfor %}" disabled>
+                            </div>
+                        </div>
+                    
+                        <div class="form-group row">
+                            <label for="atendente_id" class="col-sm-2 col-form-label mb-0">Atendente</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" id="atendente_id" value="{{ request.user.portaria.nome_completo }}" disabled>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="modal-body">
+                            <h5 class="mb-3">
+                                Realmente deseja cancelar a reserva?
+                            </h5>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-3"></div>
+                            <div class="col-sm-9">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                                <button type="submit" name="action" value="cancelar_reserva" class="btn btn-primary">Cancelar reserva</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 {% endblock %}

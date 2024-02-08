@@ -26,9 +26,14 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="h5 mb-1 font-weight-bold text-primary">Reservas salvas</div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <i class="fas fa-solid fa-check fa-2x text-gray-300"></i>
+                                </div>
+                                <div class="h5 ml-2 mb-1 font-weight-bold text-primary">Reservas salvas</div>
+                            </div>
                             <div class="text-xs font-weight-bold text-gray-800 text-uppercase">
-                                {% for reserva in reservas %}
+                                {% for reserva in reservas_proximas %}
                                     <hr>
                                     <div class="mb-2">
                                         <span class="font-weight-bold text-dark">Reserva em nome de:</span> {{ reserva.nome_hospede }}
@@ -38,10 +43,6 @@
                                     </div>
                                 {% endfor %}
                             </div>
-                        </div>
-                        
-                        <div class="col-auto">
-                            <i class="fas fa-solid fa-check fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
@@ -53,7 +54,12 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="h5 mb-1 font-weight-bold text-primary">Check-In do dia</div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <i class="fas fa-user-check fa-2x text-gray-300"></i>
+                                </div>
+                                <div class="h5 ml-2 mb-1 font-weight-bold text-primary">Check-In do dia</div>
+                            </div>
                             <div class="text-xs font-weight-bold text-gray-800 text-uppercase">
                                 {% for hoje in checkin_hoje %}
                                 <hr>
@@ -67,9 +73,7 @@
                             </div>
                         </div>
                         
-                        <div class="col-auto">
-                            <i class="fas fa-user-check fa-2x text-gray-300"></i>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -80,7 +84,12 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="h5 mb-1 font-weight-bold text-primary">Check-Out do dia</div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <i class="fas fa-solid fa-door-open fa-2x text-gray-300"></i>
+                                </div>
+                                <div class="h5 ml-2 mb-1 font-weight-bold text-primary">Check-Out do dia</div>
+                            </div>
                             <div class="text-xs font-weight-bold text-gray-800 text-uppercase">
                                 {% for hoje in checkout_hoje %}
                                 <hr>
@@ -93,9 +102,7 @@
                                 {% endfor %}
                             </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-solid fa-door-open fa-2x text-gray-300"></i>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -109,7 +116,12 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="h5 mb-1 font-weight-bold text-primary">Ocupação atual do hotel</div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <i class="fas fa-solid fa-hotel fa-2x text-gray-300"></i>
+                                </div>
+                                <div class="h5 ml-2 mb-1 font-weight-bold text-primary">Ocupação atual do hotel</div>
+                            </div>
                             <div class="text-xs font-weight-bold text-gray-800 text-uppercase">
                                 <hr>
                                 <div class="mb-2">
@@ -126,9 +138,6 @@
                             </div>
                         </div>
                         
-                        <div class="col-auto">
-                            <i class="fas fa-solid fa-hotel fa-2x text-gray-300"></i>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -139,7 +148,12 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="h5 mb-1 font-weight-bold text-primary">Hóspedes registrados no mês atual</div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <i class="fas fa-users fa-2x text-gray-300"></i>
+                                </div>
+                                <div class="h5 ml-2 mb-1 font-weight-bold text-primary">Hóspedes registrados no mês atual</div>
+                            </div>
                             <div class="text-xs font-weight-bold text-gray-800 text-uppercase">
                                     <hr>
                                     <div class="mb-2">
@@ -147,9 +161,7 @@
                                     </div>
                             </div>
                         </div>
-                        <div class="col-auto">
-                            <i class="fas fa-users fa-2x text-gray-300"></i>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -160,11 +172,16 @@
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="h5 mb-1 font-weight-bold text-primary">Estatistica de ocupação do hotel</div>
+                            <div class='row'>
+                                <div class="col-auto">
+                                    <i class="fas fa-solid fa-chart-line fa-2x text-gray-300"></i>
+                                </div>
+                                <div class="h5 ml-2 mb-1 font-weight-bold text-primary">Estatistica de ocupação do hotel</div>
+                            </div>
                             <div class="text-xs font-weight-bold text-gray-800 text-uppercase">
                                 <hr>
                                 <div class="mb-1">
-                                    <span class="font-weight-bold text-dark">Total de reservas realizadas:</span> {{ total_reservas }}
+                                    <span class="font-weight-bold text-dark">Total de reservas confirmadas:</span> {{ total_reservas }}
                                 </div>
                                 <hr>
                                 <div class="mb-1">
@@ -179,10 +196,6 @@
                                     <span class="font-weight-bold text-dark">Taxa de ocupação:</span> {{ taxa_ocupacao }}
                                 </div>
                             </div>
-                        </div>
-                        
-                        <div class="col-auto">
-                            <i class="fas fa-solid fa-chart-line fa-2x text-gray-300"></i>
                         </div>
                     </div>
                 </div>
