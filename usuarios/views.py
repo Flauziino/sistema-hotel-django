@@ -44,6 +44,11 @@ def index(request):
 
     num_quartos_ocupados = len(quartos_ocupados)
 
+    total_quartos = (
+        models.Quarto.objects
+        .count()
+    )
+
     reservas_proximas = (
         models.Reserva.objects
         .filter(status_reserva='CONFIRMADO')
@@ -57,6 +62,35 @@ def index(request):
         .order_by('-pk')[:6]
         )
 
+    total_reservas = (
+        models.Reserva.objects
+        .filter(status_reserva='CONFIRMADO')
+        .count()
+    )
+
+    total_checkins = (
+        models.Hospede.objects
+        .filter(
+            Q(status='EM_ESTADIA') |
+            Q(status='CHECKOUT_REALIZADO')
+            )
+        .filter(horario_checkin__date__lte=hoje)
+        .count()
+    )
+
+    total_checkouts = (
+        models.Hospede.objects
+        .filter(status='CHECKOUT_REALIZADO')
+        .filter(horario_checkout__date__lte=hoje)
+        .count()
+    )
+
+    taxa_ocupacao = 0
+    if total_reservas > 0:
+        taxa_ocupacao = (
+            num_quartos_ocupados / total_quartos
+        ) * 100
+
     contexto = {
         'inicio_dashboard': 'Início da dashboard',
         'nome_pagina': 'Informações do hotel',
@@ -67,6 +101,10 @@ def index(request):
         'ocupacao_hoje': num_quartos_ocupados,
         'quartos_ocupados': quartos_ocupados,
         'hospedes_mes': hospedes_mes,
+        'total_reservas': total_reservas,
+        'total_checkins': total_checkins,
+        'total_checkouts': total_checkouts,
+        'taxa_ocupacao': f'{taxa_ocupacao:.2f} %',
     }
 
     return render(
