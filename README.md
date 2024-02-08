@@ -1,7 +1,7 @@
-# Documentação do Projeto "Sistema Simples de Hotel"
+# Documentação do Projeto "Sistema de Hotel com Django"
 
 ## Introdução
-O "Sistema Simples de Hotel" é uma aplicação desenvolvida utilizando Python com o framework Django, HTML e CSS. O sistema tem como objetivo gerenciar reservas, check-ins e check-outs de um hotel. Cada componente do projeto é organizado em apps individuais, focados em funcionalidades específicas.
+O "Sistema de Hotel com Django" é uma aplicação desenvolvida utilizando Python com o framework Django, HTML e CSS. O sistema é simples e tem como objetivo gerenciar reservas, check-ins e check-outs de um hotel. Cada componente do projeto é organizado em apps individuais, focados em funcionalidades específicas.
 
 ## Estrutura do Projeto
 
