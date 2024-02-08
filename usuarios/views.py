@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from django.db.models import Min
 from django.db.models import Q
@@ -8,6 +9,7 @@ from django.utils import timezone
 from hospedes import models
 
 
+@login_required
 def index(request):
     hoje = timezone.now().date()
     mes = timezone.now().month

@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
+from django.contrib.auth.decorators import login_required
 
 from .forms import ReservaForm
 from .models import Hospede, Reserva
@@ -10,6 +11,7 @@ from django.utils import timezone
 
 # Apos a criaçao do app Quartos
 # é preciso voltar e realizar algumas verificaçoes
+@login_required
 def realizar_reserva(request):
     form = ReservaForm()
 
@@ -69,6 +71,7 @@ def realizar_reserva(request):
     )
 
 
+@login_required
 def check_in(request, id):
 
     hospede = get_object_or_404(Hospede, id=id)
@@ -134,6 +137,7 @@ def check_in(request, id):
     )
 
 
+@login_required
 def check_out(request, id):
 
     hospede = get_object_or_404(Hospede, id=id)
