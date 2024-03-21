@@ -92,7 +92,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'usuarios.Usuario'
+# AUTH_USER_MODEL = 'usuarios.Usuario'
 
 
 # Password validation

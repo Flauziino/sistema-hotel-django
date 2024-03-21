@@ -80,7 +80,7 @@ class Hospede(models.Model):
 
             cpf_formatado = (
                 f'{cpf_parte_um}.{cpf_parte_dois}.{cpf_parte_tres}-{cpf_final}'
-                )
+            )
 
             return cpf_formatado
 
@@ -157,12 +157,12 @@ class Reserva(models.Model):
     def get_status_reserva_display(self):
         return dict(self.STATUS_RESERVA).get(
             self.status_reserva, self.status_reserva
-            )
+        )
 
     def get_status_forma_pagamento_display(self):
         return dict(self.FORMA_PAGAMENTO_CHOICES).get(
             self.forma_pagamento, self.forma_pagamento
-            )
+        )
 
     class Meta:
         verbose_name = 'Reserva'
