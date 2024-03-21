@@ -19,7 +19,7 @@ def index(request):
         .filter(
             Q(status='EM_ESTADIA') |
             Q(status='CHECKOUT_REALIZADO')
-            )
+        )
         .filter(horario_checkin__month=mes)
         .count()
     )
@@ -68,7 +68,7 @@ def index(request):
         models.Hospede.objects
         .filter(status='EM_ESTADIA')
         .order_by('-pk')
-        )
+    )
 
     total_reservas = (
         models.Reserva.objects
@@ -81,7 +81,7 @@ def index(request):
         .filter(
             Q(status='EM_ESTADIA') |
             Q(status='CHECKOUT_REALIZADO')
-            )
+        )
         .filter(horario_checkin__date__lte=hoje)
         .count()
     )

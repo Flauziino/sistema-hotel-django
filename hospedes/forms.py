@@ -1,7 +1,6 @@
 from django import forms
-from hospedes.models import Hospede, Reserva
+from hospedes.models import Reserva
 from quartos.models import Quarto
-from portaria.models import Portaria
 
 
 class ReservaForm(forms.ModelForm):
@@ -40,12 +39,14 @@ class ReservaForm(forms.ModelForm):
     )
 
     horario_checkin = forms.DateTimeField(
-        widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        widget=forms.DateTimeInput(
+            attrs={'type': 'datetime-local', 'class': 'form-control'}),
         input_formats=['%Y-%m-%dT%H:%M']
     )
 
     horario_checkout = forms.DateTimeField(
-        widget=forms.DateTimeInput(attrs={'type': 'datetime-local', 'class': 'form-control'}),
+        widget=forms.DateTimeInput(
+            attrs={'type': 'datetime-local', 'class': 'form-control'}),
         input_formats=['%Y-%m-%dT%H:%M']
     )
 
@@ -72,7 +73,8 @@ class ReservaForm(forms.ModelForm):
                 attrs={'placeholder': 'Digite o número do hóspede'}
             ),
             'quartos': forms.TextInput(
-                attrs={'placeholder': 'Digite o número do quarto que o hóspede deseja reservar'}
+                attrs={
+                    'placeholder': 'Digite o número do quarto que o hóspede deseja reservar'}  # noqa: E501
             ),
             'status_reserva': forms.TextInput(
                 attrs={'placeholder': 'Selecione o status da reserva'}
