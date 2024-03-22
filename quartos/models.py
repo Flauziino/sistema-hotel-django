@@ -48,7 +48,7 @@ class Quarto(models.Model):
 
         new_height = round(
             (new_width * original_height) / original_width
-            )
+        )
 
         new_img = img_pil.resize(
             (new_width, new_height), Image.LANCZOS

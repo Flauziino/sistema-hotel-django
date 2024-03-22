@@ -4,8 +4,6 @@ from usuarios import views
 
 from .test_usuarios_base import BaseTestMixin, timezone
 
-from datetime import datetime, timedelta
-
 
 class UsuariosIndexTest(BaseTestMixin):
 
@@ -110,14 +108,14 @@ class UsuariosIndexTest(BaseTestMixin):
         hoje = timezone.now().date()
 
         hospede = self.make_hospede()
-        reserva = self.make_reserva(
+        self.make_reserva(
             nome_hospede=hospede.nome_completo,
             registrado_por=hospede.registrado_por,
             horario_checkin=hoje,
             horario_checkout=hoje,
             status_reserva='CONFIRMADO'
         )
-        quarto = self.make_quarto()
+        self.make_quarto()
 
         response = self.client.get(
             reverse(
