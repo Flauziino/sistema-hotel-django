@@ -34,10 +34,10 @@ class Quarto(models.Model):
 
     @staticmethod
     def resize_image(img, new_width=800):
-        img_full_path = os.path.join(
-            settings.MEDIA_ROOT,
-            img.name
-        )
+        if isinstance(img, Image.Image):
+            img_full_path = os.path.join(settings.MEDIA_ROOT, img.filename)
+        else:
+            img_full_path = os.path.join(settings.MEDIA_ROOT, img.name)
 
         img_pil = Image.open(img_full_path)
         original_width, original_height = img_pil.size

@@ -15,8 +15,8 @@ class QuartosModelTest(BaseTestMixin):
 
     def setUp(self) -> None:
         # criando uma imagem fake
-        image_django = 'test_image.jpg'
-        self.image_path = os.path.join(settings.MEDIA_ROOT, image_django)
+        self.image_django = 'test_image.jpg'
+        self.image_path = os.path.join(settings.MEDIA_ROOT, self.image_django)
         # Resolvendo o caminho absoluto se necessário
         self.image_path = os.path.abspath(self.image_path)
         self.image = Image.new('RGB', (800, 600), 'white')
@@ -71,18 +71,25 @@ class QuartosModelTest(BaseTestMixin):
         ))
 
     def test_resize_imagem_method_is_working_right(self):
+        # Criando uma instância de Quarto
         quarto = self.make_quarto()
 
-        new_image = quarto.resize_image(
-            self.image_path, new_width=400)
+        # adicionando uma imagem
+        quarto.imagem = self.image_django
+        quarto.save()
 
-        # verificando se a nova imagem tem o mesmo tamanho que foi passado
-        # para dentro da função
-        self.assertEqual(
-            new_image.size, (400, 300)
-        )
+        # Carregando a imagem usando o caminho
+        image_obj = Image.open(self.image_path)
 
-        # testando se a nova imagem existe (foi salva corretamente)
-        self.assertTrue(
-            os.path.exists(self.image_path)
-        )
+        # Chamando o método resize_image() com o objeto de imagem
+        quarto.resize_image(image_obj, new_width=400)
+
+        # Verificando se a nova imagem foi salva corretamente
+        self.assertTrue(os.path.exists(self.image_path))
+
+        # Carregando a nova imagem para verificar suas dimensões
+        new_image = Image.open(self.image_path)
+
+        # Verificando se a nova imagem tem o mesmo tamanho que
+        # foi passado para dentro da função
+        self.assertEqual(new_image.size, (400, 300))
