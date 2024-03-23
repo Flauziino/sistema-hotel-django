@@ -104,6 +104,7 @@ class UsuariosIndexTest(BaseTestMixin):
             username=user.username,
             password='12345'
         )
+        self.make_porteiro(usuario=user)
 
         hoje = timezone.now().date()
 

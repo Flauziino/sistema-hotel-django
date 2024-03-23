@@ -11,11 +11,11 @@ from quartos.models import Quarto
 
 class BaseTestMixin(TestCase):
     def get_user(self, username='test', password='12345'):
-        user = get_user_model().objects.create_user(
+        self.user = get_user_model().objects.create_user(
             username=username,
             password=password
         )
-        return user
+        return self.user
 
     def make_porteiro(
         self,
@@ -25,13 +25,15 @@ class BaseTestMixin(TestCase):
         telefone="33333434",
         data_nascimento="1995-05-21"
     ):
-        return Portaria.objects.create(
-            usuario=usuario or self.get_user(),
+        self.porteiro = Portaria.objects.create(
+            usuario=usuario or self.user,
             nome_completo=nome_completo,
             cpf=cpf,
             telefone=telefone,
             data_nascimento=data_nascimento
         )
+
+        return self.porteiro
 
     def make_hospede(
         self,
@@ -51,7 +53,7 @@ class BaseTestMixin(TestCase):
             telefone=telefone,
             cpf=cpf,
             email=email,
-            registrado_por=registrado_por or self.make_porteiro()
+            registrado_por=registrado_por or self.porteiro
         )
 
     def make_quarto(
@@ -78,7 +80,7 @@ class BaseTestMixin(TestCase):
         reserva_args = {
             'forma_pagamento': forma_pagamento,
             'status_reserva': status_reserva,
-            'registrado_por': registrado_por or self.make_porteiro(),
+            'registrado_por': registrado_por,
             'horario_checkin': horario_checkin or timezone.now(),
             'horario_checkout': horario_checkout or timezone.now(),
             **kwargs  # Desempacotar os argumentos opcionais adicionais
