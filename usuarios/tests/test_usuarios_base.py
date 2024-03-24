@@ -58,7 +58,7 @@ class BaseTestMixin(TestCase):
 
     def make_quarto(
         self,
-        numero_quarto='101',
+        numero_quarto=101,
         tipo_quarto='PADRAO'
     ):
         return Quarto.objects.create(
