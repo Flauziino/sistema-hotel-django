@@ -39,7 +39,7 @@ class Hospede(models.Model):
         verbose_name="E-mail do hospede",
         max_length=255,
         blank=True,
-        null=True
+        null=True,
     )
 
     horario_checkin = models.DateTimeField(

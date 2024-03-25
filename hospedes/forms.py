@@ -1,11 +1,18 @@
 from django import forms
+from django.core.exceptions import ValidationError
+
 from hospedes.models import Reserva
 from quartos.models import Quarto
+
+from collections import defaultdict
 
 
 class ReservaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        self._my_errors = defaultdict(list)
+
         self.fields['nome_completo'].widget.attrs['placeholder'] = 'Digite o nome completo do hóspede'  # noqa: E501
         self.fields['email'].widget.attrs['placeholder'] = 'Digite o E-mail do hóspede'  # noqa: E501
         self.fields['cpf'].widget.attrs['placeholder'] = 'Digite o CPF do hóspede'  # noqa: E501
@@ -14,11 +21,12 @@ class ReservaForm(forms.ModelForm):
     nome_completo = forms.CharField(
         required=True,
         label='Nome completo:',
+        max_length=150,
     )
 
     email = forms.CharField(
         required=True,
-        max_length=194,
+        max_length=255,
         label='E-mail:',
     )
 
@@ -26,12 +34,14 @@ class ReservaForm(forms.ModelForm):
         required=True,
         max_length=11,
         label='CPF:',
+        help_text='Digite apenas números Ex:15624556712'
     )
 
     telefone = forms.CharField(
         required=True,
         max_length=11,
         label='Telefone:',
+        help_text='Digite apenas números Ex:35991355676'
     )
 
     status_reserva = forms.ChoiceField(
@@ -70,30 +80,30 @@ class ReservaForm(forms.ModelForm):
             "forma_pagamento", "horario_checkin", "horario_checkout",
         ]
 
-        error_messages = {
-            "nome_completo": {
-                "required": "O nome completo do hóspede é obrigatório"
-            },
-            "cpf": {
-                "required": "O CPF do hóspede é obrigatório"
-            },
-            "email": {
-                "required": "O E-mail do hóspede é obrigatório"
-            },
+    def clean(self, *args, **kwargs):
+        super_clean = super().clean(*args, **kwargs)
+        cleaned_data = self.cleaned_data
 
-            "telefone": {
-                "required": "O número do hóspede é obrigatório"
-            },
+        nome_completo = cleaned_data.get('nome_completo')
+        cpf = cleaned_data.get('cpf')
+        telefone = cleaned_data.get('telefone')
 
-            "quartos": {
-                "required": "O número do quarto é obrigatório"
-            },
+        if nome_completo is not None and len(nome_completo) < 5:
+            self._my_errors['nome_completo'].append(
+                'O nome completo do hóspede não deve ser tão curto'
+            )
 
-            "horario_checkin": {
-                "required": "A previsão de horário de check-in é obrigatório"
-            },
+        if cpf is not None and len(cpf) < 11:
+            self._my_errors['cpf'].append(
+                'O CPF deve ter 11 digitos numéricos'
+            )
 
-            "horario_checkout": {
-                "required": "A previsão de horário de check-out é obrigatório"
-            }
-        }
+        if telefone is not None and len(telefone) < 11:
+            self._my_errors['telefone'].append(
+                'O número de telefone deve conter 11 digitos numéricos'
+            )
+
+        if self._my_errors:
+            raise ValidationError(self._my_errors)
+
+        return super_clean
