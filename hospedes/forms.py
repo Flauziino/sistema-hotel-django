@@ -4,24 +4,34 @@ from quartos.models import Quarto
 
 
 class ReservaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['nome_completo'].widget.attrs['placeholder'] = 'Digite o nome completo do hóspede'  # noqa: E501
+        self.fields['email'].widget.attrs['placeholder'] = 'Digite o E-mail do hóspede'  # noqa: E501
+        self.fields['cpf'].widget.attrs['placeholder'] = 'Digite o CPF do hóspede'  # noqa: E501
+        self.fields['telefone'].widget.attrs['placeholder'] = 'Digite o número de telefone do hóspede'  # noqa: E501
 
     nome_completo = forms.CharField(
-        required=True
+        required=True,
+        label='Nome completo:',
     )
 
     email = forms.CharField(
         required=True,
-        max_length=194
+        max_length=194,
+        label='E-mail:',
     )
 
     cpf = forms.CharField(
         required=True,
-        max_length=11
+        max_length=11,
+        label='CPF:',
     )
 
     telefone = forms.CharField(
         required=True,
-        max_length=11
+        max_length=11,
+        label='Telefone:',
     )
 
     status_reserva = forms.ChoiceField(
@@ -29,6 +39,7 @@ class ReservaForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
     quartos = forms.ModelMultipleChoiceField(
+        label='Quarto (Quartos caso haja mais de um):',
         queryset=Quarto.objects.all(),
         widget=forms.SelectMultiple(attrs={'class': 'form-control'})
     )
@@ -58,42 +69,6 @@ class ReservaForm(forms.ModelForm):
             "telefone", "quartos", "status_reserva",
             "forma_pagamento", "horario_checkin", "horario_checkout",
         ]
-
-        widgets = {
-            'nome_completo': forms.TextInput(
-                attrs={'placeholder': 'Digite o nome completo do hóspede'}
-            ),
-            'cpf': forms.TextInput(
-                attrs={'placeholder': 'Digite o CPF'}
-            ),
-            'email': forms.TextInput(
-                attrs={'placeholder': 'Digite o E-mail'}
-            ),
-            'telefone': forms.TextInput(
-                attrs={'placeholder': 'Digite o número do hóspede'}
-            ),
-            'quartos': forms.TextInput(
-                attrs={
-                    'placeholder': 'Digite o número do quarto que o hóspede deseja reservar'}  # noqa: E501
-            ),
-            'status_reserva': forms.TextInput(
-                attrs={'placeholder': 'Selecione o status da reserva'}
-            ),
-            'horario_checkin': forms.TextInput(
-                attrs={'placeholder': 'Qual horário previsto para check-in?'}
-            ),
-            'horario_checkout': forms.TextInput(
-                attrs={'placeholder': 'Qual horário previsto para check-out?'}
-            )
-        }
-
-        labels = {
-            'nome_completo': 'Nome completo:',
-            'cpf': 'CPF:',
-            'email': 'E-mail:',
-            'telefone': 'Telefone:',
-            'quartos': 'Quarto (Quartos caso haja mais de um):',
-        }
 
         error_messages = {
             "nome_completo": {
