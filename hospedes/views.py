@@ -109,18 +109,14 @@ def check_in(request, id):
             # Verificando se ainda nao foi feito check-in
             if hospede.status == 'AGUARDANDO_CHECKIN':
 
-                try:
-                    reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
-                    reserva.status_reserva = 'CANCELADA'
-                    reserva.save()
+                reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
+                reserva.status_reserva = 'CANCELADA'
+                reserva.save()
 
-                    messages.success(
-                        request,
-                        'Reserva do hóspede cancelada com sucesso'
-                    )
-
-                except Reserva.DoesNotExist:
-                    pass
+                messages.success(
+                    request,
+                    'Reserva do hóspede cancelada com sucesso'
+                )
 
             return redirect(
                 'index'
