@@ -10,7 +10,7 @@ from usuarios.tests.test_usuarios_base import (
 )
 
 
-class HospedesViewsTest(BaseTestMixin):
+class HospedesRealizarReservaViewTest(BaseTestMixin):
     def test_hospedes_realizar_reserva_view_function_is_correct(self):
         view = resolve(
             reverse(
