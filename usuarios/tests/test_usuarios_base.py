@@ -10,6 +10,22 @@ from quartos.models import Quarto
 
 
 class BaseTestMixin(TestCase):
+    def make_full_hospede_no_login(self):
+        user = self.get_user()
+        self.make_porteiro(usuario=user)
+        hospede = self.make_hospede()
+        return hospede
+
+    def make_full_hospede_with_login(self):
+        user = self.get_user()
+        self.client.login(
+            username=user.username,
+            password='12345'
+        )
+        self.make_porteiro(usuario=user)
+        hospede = self.make_hospede()
+        return hospede
+
     def get_user(self, username='test', password='12345'):
         self.user = get_user_model().objects.create_user(
             username=username,

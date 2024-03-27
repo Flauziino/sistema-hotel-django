@@ -11,21 +11,6 @@ from usuarios.tests.test_usuarios_base import (
 
 
 class HospedesCheckInViewTest(BaseTestMixin):
-    def make_full_hospede_no_login(self):
-        user = self.get_user()
-        self.make_porteiro(usuario=user)
-        hospede = self.make_hospede()
-        return hospede
-
-    def make_full_hospede_with_login(self):
-        user = self.get_user()
-        self.client.login(
-            username=user.username,
-            password='12345'
-        )
-        self.make_porteiro(usuario=user)
-        hospede = self.make_hospede()
-        return hospede
 
     def test_hospedes_check_in_view_function_is_correct(self):
         hospede = self.make_full_hospede_no_login()
@@ -141,6 +126,26 @@ class HospedesCheckInViewTest(BaseTestMixin):
             response, 'Check-In do visitante realizado com sucesso'
         )
 
+    def test_hospedes_check_in_view_make_check_in_and_hospede_status_now_is_em_estadia(self):  # noqa: E501
+        hospede = self.make_full_hospede_with_login()
+
+        url = reverse(
+            'hospedes:check_in',
+            kwargs={'id': hospede.id}
+        )
+
+        self.client.post(
+            url,
+            data={'action': 'check_in'},
+            follow=True
+        )
+        # recarregando com os dados apos a execuçao do post!
+        hospede.refresh_from_db()
+
+        self.assertEqual(
+            hospede.status, 'EM_ESTADIA'
+        )
+
     def test_hospedes_check_in_view_cancel_if_hospede_has_reserva_confirmada_check_in_and_redirect_to_index(self):  # noqa: E501
         # criar um hospede
         hospede = self.make_full_hospede_with_login()
@@ -193,6 +198,56 @@ class HospedesCheckInViewTest(BaseTestMixin):
         self.assertContains(
             response,
             'Reserva do hóspede cancelada com sucesso',
+        )
+
+    def test_hospedes_check_in_view_cancel_if_hospede_has_reserva_confirmada_check_and_reserva_status_now_is_cancelada(self):  # noqa: E501
+        # criar um hospede
+        hospede = self.make_full_hospede_with_login()
+
+        # simulando uma data para um checkin para hoje
+        hoje = timezone.now().date()
+        # simulando checkout para amanha
+        amanha = hoje + timedelta(days=1)
+
+        # criando um quarto
+        quarto = Quarto.objects.create(
+            numero_quarto='101',
+            tipo_quarto='PADRAO'
+        )
+
+        # criando uma reserva para receber o status de "CONFIRMADO"
+        reserva = Reserva.objects.create(
+            nome_hospede=hospede,
+            status_reserva='CONFIRMADO',
+            forma_pagamento='A_VISTA',
+            horario_checkin=hoje,
+            horario_checkout=amanha,
+        )
+
+        # adicionando quarto a reserva e salvando a reserva
+        reserva.quartos.add(quarto)
+        reserva.save()
+
+        # adicionando a reserva ao hospede e salvando o hospede
+        hospede.reservas.add(reserva)
+        hospede.save()
+
+        url = reverse(
+            'hospedes:check_in',
+            kwargs={'id': hospede.id}
+        )
+
+        self.client.post(
+            url,
+            data={'action': 'cancelar_reserva'},
+            follow=True
+        )
+
+        # recarregando com os dados apos a execuçao do post!
+        reserva.refresh_from_db()
+
+        self.assertEqual(
+            reserva.status_reserva, 'CANCELADA'
         )
 
     def test_hospedes_check_in_view_got_em_estadia_status(self):
