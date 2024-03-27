@@ -13,7 +13,7 @@ class UsuariosIndexTest(BaseTestMixin):
                 'index'
             )
         )
-        self.assertIs(view.func, views.index)
+        self.assertIs(view.func.view_class, views.Index)
 
     def test_usuarios_index_view_returns_statuscode_200_if_logged(self):
 
