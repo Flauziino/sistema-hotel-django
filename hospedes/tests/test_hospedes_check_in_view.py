@@ -194,3 +194,63 @@ class HospedesCheckInViewTest(BaseTestMixin):
             response,
             'Reserva do hóspede cancelada com sucesso',
         )
+
+    def test_hospedes_check_in_view_got_em_estadia_status(self):
+        hospede = self.make_full_hospede_with_login()
+        hospede.status = 'EM_ESTADIA'
+        hospede.save()
+
+        url = reverse(
+            'hospedes:check_in',
+            kwargs={'id': hospede.id}
+        )
+
+        response = self.client.post(
+            url,
+            data={'action': 'check_in'},
+            follow=True
+        )
+
+        self.assertRedirects(
+            response, '/'
+        )
+
+    def test_hospedes_check_in_view_got_another_action_not_check_in_or_cancelar_reserva(self):  # noqa: E501
+        hospede = self.make_full_hospede_with_login()
+        hospede.status = 'EM_ESTADIA'
+        hospede.save()
+
+        url = reverse(
+            'hospedes:check_in',
+            kwargs={'id': hospede.id}
+        )
+
+        response = self.client.post(
+            url,
+            data={'action': 'cancelar'},
+            follow=True
+        )
+
+        self.assertIn(
+            'hospede', response.context
+        )
+
+    def test_hospedes_check_in_view_got_the_right_action_but_hospede_status_not_aguardando_checkin(self):  # noqa: E501
+        hospede = self.make_full_hospede_with_login()
+        hospede.status = 'EM_ESTADIA'
+        hospede.save()
+
+        url = reverse(
+            'hospedes:check_in',
+            kwargs={'id': hospede.id}
+        )
+
+        response = self.client.post(
+            url,
+            data={'action': 'cancelar_reserva'},
+            follow=True
+        )
+
+        self.assertRedirects(
+            response, '/'
+        )
