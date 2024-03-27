@@ -7,7 +7,7 @@ app_name = 'hospedes'
 urlpatterns = [
     path(
         'realizar-reserva/',
-        views.realizar_reserva,
+        views.RealizarReserva.as_view(),
         name='realizar_reserva'
     ),
 

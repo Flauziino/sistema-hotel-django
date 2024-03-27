@@ -1,74 +1,55 @@
-from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.db import transaction
+from django.urls import reverse_lazy
+from django.views.generic.edit import CreateView
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import ReservaForm
-from .models import Hospede, Reserva
+from .models import Hospede
 
 from django.utils import timezone
 
 
-# Apos a criaçao do app Quartos
-# é preciso voltar e realizar algumas verificaçoes
-@login_required
-def realizar_reserva(request):
-    form = ReservaForm()
+@method_decorator(
+    login_required(login_url='login', redirect_field_name='next'),
+    name='dispatch'
+)
+class RealizarReserva(CreateView):
+    # model principal
+    model = Hospede
+    form_class = ReservaForm
+    template_name = 'realizar_reserva.html'
+    success_url = reverse_lazy('index')
 
-    if request.method == "POST":
-        form = ReservaForm(request.POST)
+    def form_valid(self, form):
+        novo_hospede = Hospede.objects.create(
+            nome_completo=form.cleaned_data['nome_completo'],
+            telefone=form.cleaned_data['telefone'],
+            cpf=form.cleaned_data['cpf'],
+            email=form.cleaned_data['email'],
+            status='AGUARDANDO_CHECKIN'
+        )
 
-        if form.is_valid():
+        # Criar a reserva associada ao novo hospede
+        # Salvando a reserva, mas sem persistir no banco de dados ainda
+        # pois ela vai precisar de um hospede para salvar antes.
+        reserva = form.save(commit=False)
+        reserva.nome_hospede = novo_hospede  # Associando o hospede à reserva
+        reserva.registrado_por = self.request.user.portaria
+        reserva.status_reserva = 'CONFIRMADO'
+        reserva.save()
+        reserva.quartos.set(form.cleaned_data['quartos'])
+        reserva.horario_checkin = (form.cleaned_data['horario_checkin'])
+        reserva.horario_checkout = (form.cleaned_data['horario_checkout'])
 
-            # Criar o hospede
-            novo_hospede = Hospede.objects.create(
-                nome_completo=form.cleaned_data['nome_completo'],
-                telefone=form.cleaned_data['telefone'],
-                cpf=form.cleaned_data['cpf'],
-                email=form.cleaned_data['email'],
-                status='AGUARDANDO_CHECKIN'
-            )
+        novo_hospede.reservas.add(reserva)
 
-            # Criar a reserva associada ao novo hospede
-            with transaction.atomic():
-                reserva = Reserva.objects.create(
-                    nome_hospede=novo_hospede,
-                    registrado_por=request.user.portaria,
-                    status_reserva='CONFIRMADO',
-                )
-
-                reserva.quartos.set(form.cleaned_data['quartos'])
-
-                reserva.horario_checkin = (
-                    form.cleaned_data['horario_checkin']
-                )
-
-                reserva.horario_checkout = (
-                    form.cleaned_data['horario_checkout']
-                )
-
-                reserva.save()
-
-            novo_hospede.reservas.add(reserva)
-
-            messages.success(
-                request,
-                "Reserva do hóspede registrada com sucesso!"
-            )
-
-            return redirect(
-                "index"
-            )
-
-    contexto = {
-        "form": form,
-    }
-
-    return render(
-        request,
-        "realizar_reserva.html",
-        contexto
-    )
+        messages.success(
+            self.request,
+            "Reserva do hóspede registrada com sucesso!"
+        )
+        return super().form_valid(form)
 
 
 @login_required

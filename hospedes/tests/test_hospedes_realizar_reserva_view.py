@@ -17,7 +17,7 @@ class HospedesRealizarReservaViewTest(BaseTestMixin):
                 'hospedes:realizar_reserva'
             )
         )
-        self.assertIs(view.func, views.realizar_reserva)
+        self.assertIs(view.func.view_class, views.RealizarReserva)
 
     def test_hospedes_realizar_reserva_view_returns_statuscode_200_if_logged(self):  # noqa: E501
 
