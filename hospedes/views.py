@@ -1,4 +1,5 @@
 from django.views import View
+from django.db.models import Q
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
@@ -7,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
 
 from .forms import ReservaForm
-from .models import Hospede
+from .models import Hospede, Reserva
 
 from django.utils import timezone
 
@@ -30,6 +31,36 @@ class RealizarReservaView(CreateView):
     success_url = reverse_lazy('index')
 
     def form_valid(self, form):
+        # validando se a data do checkin é uma data futura
+        horario_checkin = form.cleaned_data['horario_checkin']
+        horario_checkout = form.cleaned_data['horario_checkout']
+
+        if horario_checkin.date() < timezone.now().date():
+            messages.error(
+                self.request,
+                'Não é possivel reservar para uma data passada!'
+            )
+            return redirect('index')
+        # selecionando os quartos pelo forms
+        quartos_selecionados = form.cleaned_data['quartos']
+        # fazendo filtros para logica de permiçao ou nao de reserva
+        # (checando se quarto esta vago no periodo desejado)
+        reservas_intersecao = Reserva.objects.filter(
+            Q(horario_checkin__lt=horario_checkout,
+              horario_checkout__gt=horario_checkin) |
+            Q(horario_checkin__lte=horario_checkin,
+              horario_checkout__gte=horario_checkout)
+        )
+
+        # validando se o quarto esta disponivel no periodo especificado
+        for quarto in quartos_selecionados:
+            if reservas_intersecao.filter(quartos=quarto).exists():
+                messages.error(
+                    self.request,
+                    f"O quarto {quarto.numero_quarto} já está ocupado nesse período."  # noqa: E501
+                )
+                return redirect('index')
+
         novo_hospede = Hospede.objects.create(
             nome_completo=form.cleaned_data['nome_completo'],
             telefone=form.cleaned_data['telefone'],
