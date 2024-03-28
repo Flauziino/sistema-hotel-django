@@ -97,6 +97,7 @@ class Reserva(models.Model):
 
     STATUS_RESERVA = [
         ('AGUARDANDO', 'Aguardando confirmação'),
+        ('EM_ESTADIA', 'Em estadia'),
         ('CONFIRMADO', 'Reserva confirmada'),
         ('CANCELADA', 'Reserva cancelada')
     ]

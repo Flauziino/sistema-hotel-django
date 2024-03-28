@@ -16,7 +16,6 @@ from hospedes import models
     name='dispatch'
 )
 class IndexView(TemplateView):
-
     ordering = ['-id']
     template_name = 'index.html'
 
@@ -65,20 +64,20 @@ class IndexView(TemplateView):
 
         reservas = (
             models.Reserva.objects
-            .filter(status_reserva='CONFIRMADO')
+            .filter(status_reserva='CONFIRMADO', horario_checkin__gte=hoje)
             .order_by('-pk')
         )[:10]
 
         reservas_proximas = (
             models.Reserva.objects
-            .filter(status_reserva='CONFIRMADO')
+            .filter(status_reserva='CONFIRMADO', horario_checkin__gte=hoje)
             .annotate(proxima_checkin=Min('horario_checkin'))
             .order_by('proxima_checkin')
         )[:5]
 
         hospedes = (
             models.Hospede.objects
-            .filter(status='EM_ESTADIA')
+            .filter(status='EM_ESTADIA', horario_checkout__gte=hoje)
             .order_by('-pk')
         )
 

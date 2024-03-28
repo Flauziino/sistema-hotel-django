@@ -85,6 +85,10 @@ class CheckInView(MyBaseView):
             hospede.registrado_por = request.user.portaria
             hospede.save()
 
+            reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
+            reserva.status_reserva = 'EM_ESTADIA'
+            reserva.save()
+
             messages.success(
                 request,
                 'Check-In do visitante realizado com sucesso'
