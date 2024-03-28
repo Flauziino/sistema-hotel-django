@@ -12,6 +12,14 @@ from .models import Hospede
 from django.utils import timezone
 
 
+class MyBaseView(View):
+    def get_hospede(self, id):
+        hospede = None
+        if id:
+            hospede = get_object_or_404(Hospede, id=id)
+            return hospede
+
+
 @method_decorator(
     login_required(login_url='login', redirect_field_name='next'),
     name='dispatch'
@@ -57,13 +65,7 @@ class RealizarReservaView(CreateView):
     login_required(login_url='login', redirect_field_name='next'),
     name='dispatch'
 )
-class CheckInView(View):
-    def get_hospede(self, id):
-        hospede = None
-        if id:
-            hospede = get_object_or_404(Hospede, id=id)
-            return hospede
-
+class CheckInView(MyBaseView):
     def get(self, request, id):
         hospede = self.get_hospede(id)
         contexto = {'hospede': hospede}
@@ -108,24 +110,27 @@ class CheckInView(View):
             return redirect('index')
 
 
-@login_required
-def check_out(request, id):
+@method_decorator(
+    login_required(login_url='login', redirect_field_name='next'),
+    name='dispatch'
+)
+class CheckOutView(MyBaseView):
+    def get(self, request, id):
+        hospede = self.get_hospede(id)
+        context = {'hospede': hospede}
+        return render(
+            request,
+            'checkout.html',
+            context
+        )
 
-    hospede = get_object_or_404(Hospede, id=id)
-
-    if request.method == 'POST':
-
+    def post(self, request, id):
         action = request.POST.get('action')
 
         if action == 'check_out':
-            hospede = get_object_or_404(
-                Hospede,
-                id=id
-            )
-
+            hospede = self.get_hospede(id)
             hospede.status = 'CHECKOUT_REALIZADO'
             hospede.horario_checkout = timezone.now()
-
             hospede.save()
 
             messages.success(
@@ -133,16 +138,4 @@ def check_out(request, id):
                 'Check-Out realizado com sucesso!'
             )
 
-            return redirect(
-                'index'
-            )
-
-    contexto = {
-        "hospede": hospede,
-    }
-
-    return render(
-        request,
-        'checkout.html',
-        contexto
-    )
+            return redirect('index')

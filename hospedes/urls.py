@@ -19,7 +19,7 @@ urlpatterns = [
 
     path(
         'hospede-info/<int:id>/check-out',
-        views.check_out,
+        views.CheckOutView.as_view(),
         name='check_out'
     )
 ]

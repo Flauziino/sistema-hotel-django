@@ -130,3 +130,43 @@ def check_in(request, id):
         'checkin.html',
         contexto
     )
+
+
+@login_required
+def check_out(request, id):
+
+    hospede = get_object_or_404(Hospede, id=id)
+
+    if request.method == 'POST':
+
+        action = request.POST.get('action')
+
+        if action == 'check_out':
+            hospede = get_object_or_404(
+                Hospede,
+                id=id
+            )
+
+            hospede.status = 'CHECKOUT_REALIZADO'
+            hospede.horario_checkout = timezone.now()
+
+            hospede.save()
+
+            messages.success(
+                request,
+                'Check-Out realizado com sucesso!'
+            )
+
+            return redirect(
+                'index'
+            )
+
+    contexto = {
+        "hospede": hospede,
+    }
+
+    return render(
+        request,
+        'checkout.html',
+        contexto
+    )
