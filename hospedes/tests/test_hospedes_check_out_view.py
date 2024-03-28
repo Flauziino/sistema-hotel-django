@@ -17,7 +17,7 @@ class HospedesCheckOutViewTest(BaseTestMixin):
                 'hospedes:check_out', kwargs={'id': hospede.id}
             )
         )
-        self.assertIs(view.func, views.check_out)
+        self.assertIs(view.func.view_class, views.CheckOutView)
 
     def test_hospedes_check_out_view_returns_statuscode_200_if_logged(self):
         hospede = self.make_full_hospede_with_login()
@@ -138,8 +138,9 @@ class HospedesCheckOutViewTest(BaseTestMixin):
             follow=True
         )
 
-        self.assertIn(
-            'hospede', response.context
+        self.assertRedirects(response, '/')
+        self.assertContains(
+            response, 'Início da dashboard'
         )
 
     def test_hospedes_check_out_view_make_check_out_and_hospede_status_now_is_checkout_realizado(self):  # noqa: E501

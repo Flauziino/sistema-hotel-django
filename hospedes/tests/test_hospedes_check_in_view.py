@@ -20,7 +20,7 @@ class HospedesCheckInViewTest(BaseTestMixin):
                 'hospedes:check_in', kwargs={'id': hospede.id}
             )
         )
-        self.assertIs(view.func, views.check_in)
+        self.assertIs(view.func.view_class, views.CheckInView)
 
     def test_hospedes_check_in_view_returns_statuscode_200_if_logged(self):
         hospede = self.make_full_hospede_with_login()
@@ -266,8 +266,10 @@ class HospedesCheckInViewTest(BaseTestMixin):
             follow=True
         )
 
-        self.assertRedirects(
-            response, '/'
+        self.assertRedirects(response, '/')
+        self.assertIn(
+            'Algo deu errado!',
+            response.content.decode('utf-8')
         )
 
     def test_hospedes_check_in_view_got_another_action_not_check_in_or_cancelar_reserva(self):  # noqa: E501
@@ -285,9 +287,10 @@ class HospedesCheckInViewTest(BaseTestMixin):
             data={'action': 'cancelar'},
             follow=True
         )
-
+        self.assertRedirects(response, '/')
         self.assertIn(
-            'hospede', response.context
+            'Algo deu errado!',
+            response.content.decode('utf-8')
         )
 
     def test_hospedes_check_in_view_got_the_right_action_but_hospede_status_not_aguardando_checkin(self):  # noqa: E501
@@ -306,6 +309,8 @@ class HospedesCheckInViewTest(BaseTestMixin):
             follow=True
         )
 
-        self.assertRedirects(
-            response, '/'
+        self.assertRedirects(response, '/')
+        self.assertIn(
+            'Algo deu errado!',
+            response.content.decode('utf-8')
         )

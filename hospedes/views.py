@@ -14,10 +14,8 @@ from django.utils import timezone
 
 class MyBaseView(View):
     def get_hospede(self, id):
-        hospede = None
-        if id:
-            hospede = get_object_or_404(Hospede, id=id)
-            return hospede
+        hospede = get_object_or_404(Hospede, id=id)
+        return hospede
 
 
 @method_decorator(
@@ -92,8 +90,6 @@ class CheckInView(MyBaseView):
                 'Check-In do visitante realizado com sucesso'
             )
 
-            return redirect('index')
-
         # para cancelar reserva
         elif action == 'cancelar_reserva' \
                 and hospede.status == 'AGUARDANDO_CHECKIN':
@@ -106,8 +102,13 @@ class CheckInView(MyBaseView):
                 request,
                 'Reserva do hóspede cancelada com sucesso'
             )
+        else:
+            messages.error(
+                request,
+                'Algo deu errado!'
+            )
 
-            return redirect('index')
+        return redirect('index')
 
 
 @method_decorator(
@@ -138,4 +139,4 @@ class CheckOutView(MyBaseView):
                 'Check-Out realizado com sucesso!'
             )
 
-            return redirect('index')
+        return redirect('index')
