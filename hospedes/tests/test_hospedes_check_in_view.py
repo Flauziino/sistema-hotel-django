@@ -105,7 +105,36 @@ class HospedesCheckInViewTest(BaseTestMixin):
         )
 
     def test_hospedes_check_in_view_make_check_in_and_redirect_to_index(self):
+        # criar um hospede
         hospede = self.make_full_hospede_with_login()
+
+        # simulando uma data para um checkin para hoje
+        hoje = timezone.now().date()
+        # simulando checkout para amanha
+        amanha = hoje + timedelta(days=1)
+
+        # criando um quarto
+        quarto = Quarto.objects.create(
+            numero_quarto='101',
+            tipo_quarto='PADRAO'
+        )
+
+        # criando uma reserva para receber o status de "CONFIRMADO"
+        reserva = Reserva.objects.create(
+            nome_hospede=hospede,
+            status_reserva='CONFIRMADO',
+            forma_pagamento='A_VISTA',
+            horario_checkin=hoje,
+            horario_checkout=amanha,
+        )
+
+        # adicionando quarto a reserva e salvando a reserva
+        reserva.quartos.add(quarto)
+        reserva.save()
+
+        # adicionando a reserva ao hospede e salvando o hospede
+        hospede.reservas.add(reserva)
+        hospede.save()
 
         url = reverse(
             'hospedes:check_in',
@@ -118,16 +147,42 @@ class HospedesCheckInViewTest(BaseTestMixin):
             follow=True
         )
 
-        self.assertRedirects(
-            response, '/'
-        )
-
+        self.assertRedirects(response, '/')
         self.assertContains(
             response, 'Check-In do visitante realizado com sucesso'
         )
 
     def test_hospedes_check_in_view_make_check_in_and_hospede_status_now_is_em_estadia(self):  # noqa: E501
+        # criar um hospede
         hospede = self.make_full_hospede_with_login()
+
+        # simulando uma data para um checkin para hoje
+        hoje = timezone.now().date()
+        # simulando checkout para amanha
+        amanha = hoje + timedelta(days=1)
+
+        # criando um quarto
+        quarto = Quarto.objects.create(
+            numero_quarto='101',
+            tipo_quarto='PADRAO'
+        )
+
+        # criando uma reserva para receber o status de "CONFIRMADO"
+        reserva = Reserva.objects.create(
+            nome_hospede=hospede,
+            status_reserva='CONFIRMADO',
+            forma_pagamento='A_VISTA',
+            horario_checkin=hoje,
+            horario_checkout=amanha,
+        )
+
+        # adicionando quarto a reserva e salvando a reserva
+        reserva.quartos.add(quarto)
+        reserva.save()
+
+        # adicionando a reserva ao hospede e salvando o hospede
+        hospede.reservas.add(reserva)
+        hospede.save()
 
         url = reverse(
             'hospedes:check_in',
@@ -142,9 +197,7 @@ class HospedesCheckInViewTest(BaseTestMixin):
         # recarregando com os dados apos a execuçao do post!
         hospede.refresh_from_db()
 
-        self.assertEqual(
-            hospede.status, 'EM_ESTADIA'
-        )
+        self.assertEqual(hospede.status, 'EM_ESTADIA')
 
     def test_hospedes_check_in_view_cancel_if_hospede_has_reserva_confirmada_check_in_and_redirect_to_index(self):  # noqa: E501
         # criar um hospede
