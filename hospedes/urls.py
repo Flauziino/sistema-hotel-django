@@ -7,13 +7,13 @@ app_name = 'hospedes'
 urlpatterns = [
     path(
         'realizar-reserva/',
-        views.RealizarReserva.as_view(),
+        views.RealizarReservaView.as_view(),
         name='realizar_reserva'
     ),
 
     path(
         'hospede-info/<int:id>/check-in',
-        views.check_in,
+        views.CheckInView.as_view(),
         name='check_in'
     ),
 

@@ -15,7 +15,8 @@ from hospedes import models
     login_required(login_url='login', redirect_field_name='next'),
     name='dispatch'
 )
-class Index(TemplateView):
+class IndexView(TemplateView):
+
     ordering = ['-id']
     template_name = 'index.html'
 
@@ -66,7 +67,7 @@ class Index(TemplateView):
             models.Reserva.objects
             .filter(status_reserva='CONFIRMADO')
             .order_by('-pk')
-        )
+        )[:10]
 
         reservas_proximas = (
             models.Reserva.objects

@@ -1,3 +1,4 @@
+from django.views import View
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
@@ -15,7 +16,7 @@ from django.utils import timezone
     login_required(login_url='login', redirect_field_name='next'),
     name='dispatch'
 )
-class RealizarReserva(CreateView):
+class RealizarReservaView(CreateView):
     # model principal
     model = Hospede
     form_class = ReservaForm
@@ -52,66 +53,59 @@ class RealizarReserva(CreateView):
         return super().form_valid(form)
 
 
-@login_required
-def check_in(request, id):
+@method_decorator(
+    login_required(login_url='login', redirect_field_name='next'),
+    name='dispatch'
+)
+class CheckInView(View):
+    def get_hospede(self, id):
+        hospede = None
+        if id:
+            hospede = get_object_or_404(Hospede, id=id)
+            return hospede
 
-    hospede = get_object_or_404(Hospede, id=id)
+    def get(self, request, id):
+        hospede = self.get_hospede(id)
+        contexto = {'hospede': hospede}
+        return render(
+            request,
+            'checkin.html',
+            contexto
+        )
 
-    if request.method == 'POST':
-
+    def post(self, request, id):
+        hospede = self.get_hospede(id)
         action = request.POST.get('action')
 
         # Para realizar checkin
-        if action == 'check_in':
+        if action == 'check_in' and hospede.status == 'AGUARDANDO_CHECKIN':
+            hospede.horario_checkin = timezone.now()
+            hospede.horario_checkout = '-'
+            hospede.status = 'EM_ESTADIA'
+            hospede.registrado_por = request.user.portaria
+            hospede.save()
 
-            # Verificando se ainda nao foi feito check-in
-            if hospede.status == 'AGUARDANDO_CHECKIN':
-                hospede.horario_checkin = timezone.now()
-                hospede.horario_checkout = '-'
-
-                hospede.status = 'EM_ESTADIA'
-
-                hospede.registrado_por = request.user.portaria
-
-                hospede.save()
-
-                messages.success(
-                    request,
-                    'Check-In do visitante realizado com sucesso'
-                )
-
-            return redirect(
-                'index'
+            messages.success(
+                request,
+                'Check-In do visitante realizado com sucesso'
             )
+
+            return redirect('index')
 
         # para cancelar reserva
-        elif action == 'cancelar_reserva':
+        elif action == 'cancelar_reserva' \
+                and hospede.status == 'AGUARDANDO_CHECKIN':
 
-            # Verificando se ainda nao foi feito check-in
-            if hospede.status == 'AGUARDANDO_CHECKIN':
+            reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
+            reserva.status_reserva = 'CANCELADA'
+            reserva.save()
 
-                reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
-                reserva.status_reserva = 'CANCELADA'
-                reserva.save()
-
-                messages.success(
-                    request,
-                    'Reserva do hóspede cancelada com sucesso'
-                )
-
-            return redirect(
-                'index'
+            messages.success(
+                request,
+                'Reserva do hóspede cancelada com sucesso'
             )
 
-    contexto = {
-        'hospede': hospede,
-    }
-
-    return render(
-        request,
-        'checkin.html',
-        contexto
-    )
+            return redirect('index')
 
 
 @login_required

@@ -1,5 +1,7 @@
+from django.utils import timezone
 from django.db import transaction
 from django.contrib import messages
+
 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
@@ -64,5 +66,67 @@ def realizar_reserva(request):
     return render(
         request,
         "realizar_reserva.html",
+        contexto
+    )
+
+
+@login_required
+def check_in(request, id):
+
+    hospede = get_object_or_404(Hospede, id=id)
+
+    if request.method == 'POST':
+
+        action = request.POST.get('action')
+
+        # Para realizar checkin
+        if action == 'check_in':
+
+            # Verificando se ainda nao foi feito check-in
+            if hospede.status == 'AGUARDANDO_CHECKIN':
+                hospede.horario_checkin = timezone.now()
+                hospede.horario_checkout = '-'
+
+                hospede.status = 'EM_ESTADIA'
+
+                hospede.registrado_por = request.user.portaria
+
+                hospede.save()
+
+                messages.success(
+                    request,
+                    'Check-In do visitante realizado com sucesso'
+                )
+
+            return redirect(
+                'index'
+            )
+
+        # para cancelar reserva
+        elif action == 'cancelar_reserva':
+
+            # Verificando se ainda nao foi feito check-in
+            if hospede.status == 'AGUARDANDO_CHECKIN':
+
+                reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
+                reserva.status_reserva = 'CANCELADA'
+                reserva.save()
+
+                messages.success(
+                    request,
+                    'Reserva do hóspede cancelada com sucesso'
+                )
+
+            return redirect(
+                'index'
+            )
+
+    contexto = {
+        'hospede': hospede,
+    }
+
+    return render(
+        request,
+        'checkin.html',
         contexto
     )
