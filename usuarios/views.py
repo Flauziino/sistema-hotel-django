@@ -52,6 +52,7 @@ class IndexView(TemplateView):
         quartos_ocupados = (
             models.Hospede.objects
             .filter(status='EM_ESTADIA')
+            .filter()
             .values_list('reservas__quartos__numero_quarto', flat=True)
         )
 
@@ -77,7 +78,7 @@ class IndexView(TemplateView):
 
         hospedes = (
             models.Hospede.objects
-            .filter(status='EM_ESTADIA', horario_checkout__gte=hoje)
+            .filter(status='EM_ESTADIA',  horario_checkout__gte=hoje)
             .order_by('-pk')
         )
 

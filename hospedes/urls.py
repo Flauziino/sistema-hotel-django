@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from .views import site
 
 
 app_name = 'hospedes'
@@ -7,19 +7,19 @@ app_name = 'hospedes'
 urlpatterns = [
     path(
         'realizar-reserva/',
-        views.RealizarReservaView.as_view(),
+        site.RealizarReservaView.as_view(),
         name='realizar_reserva'
     ),
 
     path(
         'hospede-info/<int:id>/check-in',
-        views.CheckInView.as_view(),
+        site.CheckInView.as_view(),
         name='check_in'
     ),
 
     path(
         'hospede-info/<int:id>/check-out',
-        views.CheckOutView.as_view(),
+        site.CheckOutView.as_view(),
         name='check_out'
     )
 ]
