@@ -43,4 +43,9 @@ urlpatterns = [
         api.CheckInAPIView.as_view(),
         name='check_in_api'
     ),
+    path(
+        'hospede-info-api/<int:id>/check-out',
+        api.CheckOutAPIView.as_view(),
+        name='check_out_api'
+    )
 ]

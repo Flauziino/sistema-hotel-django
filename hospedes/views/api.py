@@ -252,3 +252,26 @@ class CheckInAPIView(APIView):
             return Response({
                 'error': 'Algo deu errado!'
             }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CheckOutAPIView(APIView):
+    def get(self, request, id):
+        hospede = get_object_or_404(models.Hospede, iped=id)
+        data = {
+            'hospede': HospedeSerializer(hospede, many=False).data
+        }
+        return Response(data)
+
+    def post(self, request, id):
+        hospede = get_object_or_404(models.Hospede, id=id)
+        action = request.data.get('action')
+
+        if action == 'check_out':
+            hospede = get_object_or_404(models.Hospede, id=id)
+            hospede.status = 'CHECKOUT_REALIZADO'
+            hospede.horario_checkout = timezone.now()
+            hospede.save()
+
+            return Response({
+                'message': 'Check-Out realizado com sucesso!'
+            })
