@@ -207,3 +207,48 @@ class RealizarReservaAPIView(CreateAPIView):
             serializer_reserva.data,
             status=status.HTTP_201_CREATED
         )
+
+
+class CheckInAPIView(APIView):
+
+    def get(self, request, id):
+        hospede = get_object_or_404(models.Hospede, id=id)
+        data = {
+            'hospede': HospedeSerializer(hospede, many=False).data
+        }
+        return Response(data)
+
+    def post(self, request, id):
+        hospede = get_object_or_404(models.Hospede, id=id)
+        action = request.data.get('action')
+        portaria = models.Portaria.objects.all().first()
+
+        if action == 'check_in' and hospede.status == 'AGUARDANDO_CHECKIN':  # noqa: E501
+            hospede.horario_checkin = timezone.now()
+            hospede.horario_checkout = '-'
+            hospede.status = 'EM_ESTADIA'
+            hospede.registrado_por = portaria
+            hospede.save()
+
+            reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
+            reserva.status_reserva = 'EM_ESTADIA'
+            reserva.save()
+
+            return Response({
+                'message': 'Check-In do visitante realizado com sucesso'
+            }, status=status.HTTP_200_OK)
+
+        elif action == 'cancelar_reserva' \
+                and hospede.status == 'AGUARDANDO_CHECKIN':
+            reserva = hospede.reservas.get(status_reserva='CONFIRMADO')
+            reserva.status_reserva = 'CANCELADA'
+            reserva.save()
+
+            return Response({
+                'message': 'Reserva do hóspede cancelada com sucesso'
+            }, status=status.HTTP_200_OK)
+
+        else:
+            return Response({
+                'error': 'Algo deu errado!'
+            }, status=status.HTTP_400_BAD_REQUEST)

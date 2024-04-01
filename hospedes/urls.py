@@ -38,4 +38,9 @@ urlpatterns = [
         api.RealizarReservaAPIView.as_view(),
         name='realizar_reserva_api'
     ),
+    path(
+        'hospede-info-api/<int:id>/check-in',
+        api.CheckInAPIView.as_view(),
+        name='check_in_api'
+    ),
 ]
