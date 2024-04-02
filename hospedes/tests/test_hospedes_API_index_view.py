@@ -1,34 +1,12 @@
-from rest_framework import test
-
 from django.urls import reverse, resolve
 
-from usuarios.tests.test_usuarios_base import BaseTestMixin, timezone
+from usuarios.tests.test_usuarios_base import timezone
 
 from hospedes.views import api
+from .test_hospedes_API_base import APIBaseTestMixin
 
 
-class IndexAPIView(test.APITestCase, BaseTestMixin):
-    def get_auth_data(self, username='user', password='password'):
-        user = self.get_user(
-            username=username,
-            password=password
-        )
-
-        data = {
-            'username': username,
-            'password': password
-        }
-
-        porteiro = self.make_porteiro(usuario=user)
-
-        response = self.client.post(
-            reverse('hospedes:token_obtain_pair'), data={**data}
-        )
-        return {
-            'jwt_access_token': response.data.get('access'),
-            'jwt_refresh_token': response.data.get('refresh'),
-            'porteiro': porteiro,
-        }
+class IndexAPIView(APIBaseTestMixin):
 
     def test_index_api_view_function_is_correct(self):
         view = resolve(
@@ -64,7 +42,7 @@ class IndexAPIView(test.APITestCase, BaseTestMixin):
         # (mostrando que usuario esta logado e pode ver a index)
         self.assertEqual(response.status_code, 200)
 
-    def test_index_api_method_will_receive_code_405_if_not_get(self):
+    def test_index_api_will_receive_code_405_if_method_is_not_get(self):
         # pegando um usuario
         auth_data = self.get_auth_data()
         # pegando seu acesso com jwt token
