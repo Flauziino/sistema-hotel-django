@@ -2,6 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.generics import CreateAPIView
+from rest_framework.permissions import IsAuthenticated
 
 from django.db.models import Q
 from django.db.models import Min
@@ -15,6 +16,9 @@ from hospedes import models
 
 
 class IndexAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
+    http_method_names = ['get',]
+
     def get(self, request):
         hoje = timezone.now().date()
         mes = timezone.now().month
@@ -131,6 +135,8 @@ class IndexAPIView(APIView):
 
 class CriarHospedeAPIView(CreateAPIView):
     serializer_class = HospedeSerializer
+    permission_classes = [IsAuthenticated,]
+    http_method_names = ['post',]
 
     def post(self, request, *args, **kwargs):
         data = request.data
@@ -158,6 +164,8 @@ class CriarHospedeAPIView(CreateAPIView):
 
 class RealizarReservaAPIView(CreateAPIView):
     serializer_class = ReservaSerializer
+    permission_classes = [IsAuthenticated,]
+    http_method_names = ['post',]
 
     def post(self, request, *args, **kwargs):
         data = dict(request.data)
@@ -195,9 +203,9 @@ class RealizarReservaAPIView(CreateAPIView):
                         status=status.HTTP_400_BAD_REQUEST
                     )
 
-            # TODO: Apos configurar JWT voltar nesse ponto.
             reserva = serializer_reserva.save(
-                nome_hospede=ultimo_hospede
+                nome_hospede=ultimo_hospede,
+                registrado_por=self.request.user.portaria
             )
 
             if reserva:
@@ -210,6 +218,8 @@ class RealizarReservaAPIView(CreateAPIView):
 
 
 class CheckInAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
+    http_method_names = ['post', 'get',]
 
     def get(self, request, id):
         hospede = get_object_or_404(models.Hospede, id=id)
@@ -255,6 +265,9 @@ class CheckInAPIView(APIView):
 
 
 class CheckOutAPIView(APIView):
+    permission_classes = [IsAuthenticated,]
+    http_method_names = ['post', 'get',]
+
     def get(self, request, id):
         hospede = get_object_or_404(models.Hospede, iped=id)
         data = {
