@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from hospedes.serializers import ReservaSerializer, HospedeSerializer
 
 from hospedes import models
+from quartos.models import Quarto
 
 
 class IndexAPIView(APIView):
@@ -180,41 +181,45 @@ class RealizarReservaAPIView(CreateAPIView):
         serializer_reserva = self.serializer_class(data=data)
         if horario_checkin.date() < timezone.now().date():
             return Response(
-                serializer_reserva.errors,
+                {'error': 'Data incorreta'},
                 status=status.HTTP_400_BAD_REQUEST
             )
         # selecionando os quartos pelo forms
         quartos_selecionados = data.get('quartos')
-        # fazendo filtros para logica de permiçao ou nao de reserva
-        # (checando se quarto esta vago no periodo desejado)
-        reservas_intersecao = models.Reserva.objects.filter(
-            Q(horario_checkin__lt=horario_checkout,
-              horario_checkout__gt=horario_checkin) |
-            Q(horario_checkin__lte=horario_checkin,
-              horario_checkout__gte=horario_checkout)
-        )
 
-        # validando se o quarto esta disponivel no periodo especificado
+        # Primeiro, verifique se todos os quartos estão disponíveis
+        for quarto_id in quartos_selecionados:
+            quarto = Quarto.objects.get(id=quarto_id)
+            reservas_intersecao = models.Reserva.objects.filter(
+                quartos=quarto).filter(
+                Q(horario_checkin__lt=horario_checkout,
+                  horario_checkout__gt=horario_checkin) |
+                Q(horario_checkin__lte=horario_checkin,
+                  horario_checkout__gte=horario_checkout)
+            )
+            if reservas_intersecao.exists():
+                return Response(
+                    {'error': 'O quarto já está ocupado!'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+        # Se todos os quartos estiverem disponíveis, prossiga com a reserva
         if serializer_reserva.is_valid():
-            for quarto in quartos_selecionados:
-                if reservas_intersecao.filter(quartos=quarto).exists():
-                    return Response(
-                        serializer_reserva.errors,
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-
             reserva = serializer_reserva.save(
                 nome_hospede=ultimo_hospede,
                 registrado_por=self.request.user.portaria
             )
-
             if reserva:
                 ultimo_hospede.reservas.add(reserva)
-
-        return Response(
-            serializer_reserva.data,
-            status=status.HTTP_201_CREATED
-        )
+            return Response(
+                serializer_reserva.data,
+                status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {'error': 'Formulario invalido'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 class CheckInAPIView(APIView):

@@ -19,7 +19,14 @@ class ReservaSerializer(serializers.ModelSerializer):
 
     nome_hospede = serializers.CharField(read_only=True)
     registrado_por = serializers.StringRelatedField()
-    forma_pagamento = serializers.StringRelatedField()
+    forma_pagamento = serializers.ChoiceField(
+        choices=Reserva.FORMA_PAGAMENTO_CHOICES
+    )
+    status_reserva = serializers.ChoiceField(
+        choices=Reserva.STATUS_RESERVA
+    )
+    horario_checkin = serializers.CharField()
+    horario_checkout = serializers.CharField()
 
 
 class HospedeSerializer(serializers.ModelSerializer):

@@ -6,7 +6,7 @@ from hospedes.views import api
 from .test_hospedes_API_base import APIBaseTestMixin
 
 
-class IndexAPIView(APIBaseTestMixin):
+class TestIndexAPIView(APIBaseTestMixin):
 
     def test_index_api_view_function_is_correct(self):
         view = resolve(

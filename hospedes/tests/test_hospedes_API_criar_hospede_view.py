@@ -5,8 +5,7 @@ from hospedes.views import api
 from .test_hospedes_API_base import APIBaseTestMixin
 
 
-class CriarHospedeAPIView(APIBaseTestMixin):
-
+class TestCriarHospedeAPIView(APIBaseTestMixin):
     def test_criar_hospede_api_view_function_is_correct(self):
         view = resolve(
             reverse('hospedes:criar_hospede_api')
