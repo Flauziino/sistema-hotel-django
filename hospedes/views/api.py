@@ -209,8 +209,8 @@ class RealizarReservaAPIView(CreateAPIView):
                 nome_hospede=ultimo_hospede,
                 registrado_por=self.request.user.portaria
             )
-            if reserva:
-                ultimo_hospede.reservas.add(reserva)
+            # if reserva:
+            ultimo_hospede.reservas.add(reserva)
             return Response(
                 serializer_reserva.data,
                 status=status.HTTP_201_CREATED
