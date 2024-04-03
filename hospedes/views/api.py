@@ -274,7 +274,7 @@ class CheckOutAPIView(APIView):
     http_method_names = ['post', 'get',]
 
     def get(self, request, id):
-        hospede = get_object_or_404(models.Hospede, iped=id)
+        hospede = get_object_or_404(models.Hospede, id=id)
         data = {
             'hospede': HospedeSerializer(hospede, many=False).data
         }
@@ -292,4 +292,9 @@ class CheckOutAPIView(APIView):
 
             return Response({
                 'message': 'Check-Out realizado com sucesso!'
-            })
+            }, status=status.HTTP_200_OK)
+
+        else:
+            return Response({
+                'error': 'Não foi possivel realizar o check-out.'
+            }, status=status.HTTP_400_BAD_REQUEST)
